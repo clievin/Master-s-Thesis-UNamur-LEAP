@@ -135,7 +135,8 @@ surv #p= 8e-04
 
 library(survminer)
 
-#Probleme pour graphe ci-dessous: "Erreur dans ggsurvplot(surv) : objet 'ggsurv' introuvable.
+#Probleme pour graphe ci-dessous: "Erreur dans ggsurvplot(surv) : objet 'ggsurv' introuvable." J'avais réussi à créer mon graphe de survie en janvier avec ça.
+#je ne sais pas pourquoi ces commandes ne fonctionnent plus maintenant, mais je règle ça au plus vite.
 
 ggsurvplot(
   surv,                       #  fit object with calculated statistics
