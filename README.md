@@ -180,14 +180,14 @@ dotchart(growth$growth_rate, group=growth$treatment)#extreme values
 
 ##6 Model vizualization : Graph barplot ##
 
-meanlc4<-mean((growth$growth_rate[growth$treatment=="Controle"])) #get mean for the treatment "controle"
-errorlc4<-(sd((growth$growth_rate[growth$treatment=="Controle"])))/(sqrt(length((growth$growth_rate[growth$treatment=="Controle"])))) #get errors for the treatment "controle"
+meanlc4<-mean((growth$growth_rate[growth$treatment=="control"])) #get mean for the treatment "controle"
+errorlc4<-(sd((growth$growth_rate[growth$treatment=="control"])))/(sqrt(length((growth$growth_rate[growth$treatment=="control"])))) #get errors for the treatment "controle"
 
-meanlc5<-mean((growth$growth_rate[growth$treatment=="Low"])) 
-errorlc5<-(sd((growth$growth_rate[growth$treatment=="Low"])))/(sqrt(length((growth$growth_rate[growth$treatment=="Low"]))))
+meanlc5<-mean((growth$growth_rate[growth$treatment=="low"])) 
+errorlc5<-(sd((growth$growth_rate[growth$treatment=="low"])))/(sqrt(length((growth$growth_rate[growth$treatment=="low"]))))
 
-meanlc6<-mean((growth$growth_rate[growth$treatment=="High"])) 
-errorlc6<-(sd((growth$growth_rate[growth$treatment=="High"])))/(sqrt(length((growth$growth_rate[growth$treatment=="High"]))))
+meanlc6<-mean((growth$growth_rate[growth$treatment=="high"])) 
+errorlc6<-(sd((growth$growth_rate[growth$treatment=="high"])))/(sqrt(length((growth$growth_rate[growth$treatment=="high"]))))
 
 
 matgrowth <-matrix(c(meanlc4,meanlc5,meanlc6),nrow=1,dimnames=list(c("")))
@@ -196,8 +196,8 @@ barplot(matgrowth
         ,beside = TRUE
         , horiz = FALSE
         , legend.text = FALSE
-        ,xlab="Permethrin concentration during exposure (?g/L)"
-        ,ylab=" Growth rate mean from J7 dph to J140 dph (cm)"
+        ,xlab="Permethrin concentration during exposure (µg/L)"
+        ,ylab=" Growth rate from 7 dph to 140 dph (mm)"
         ,cex.lab=1.2
         ,xlim=c(0,5.5)
         ,ylim=c(0,20)
@@ -208,19 +208,18 @@ barplot(matgrowth
         ,col=c("white","grey","grey30"))
 
 axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1)
-axis(side=2,at=c(0,20,40,60,80,100),cex.axis=1,las=2)
+axis(side=2,at=c(0,5,10,15,20),labels=c("0","5","10","15","20"),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
-text(0.5,110,"a")
-text(2.5,110,"a")
-text(4.5,70,"a")
+text(0.5,15.4,"a")
+text(2.5,15.65,"a")
+text(4.5,16.4,"a")
 
 #errors bars
 arrows(0.5, meanlc4 - errorlc4, 0.5,meanlc4 + errorlc4, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(2.5, meanlc5 - errorlc5, 2.5,meanlc5 + errorlc5, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(4.5, meanlc6 - errorlc6, 4.5,meanlc6 + errorlc6, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 
-#faire un histogramme avec un barplot avec direct moyenne et erreur standards: je pense que c'est ok mtn du coup
 
 ##### --- FECUNDITY --- #####
 
