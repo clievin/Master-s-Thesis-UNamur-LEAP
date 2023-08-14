@@ -449,12 +449,12 @@ sd(mature$age_first_egg[mature$treatment=="high"])#1.414214
 
 ###### PM impact on personality traits (boldness - shyness) ######
 
-##1? Shelter data loading ##
+##1 Shelter data loading ##
 
-m <-read.table("memoire_cassandra_txt.txt", header=T)
+m <-read.table("memoire_cassandra.txt", header=T)
 head(m,n=3)
 
-##2? Data preparation : transformation of the non-continuous variables into factors ##
+##2 Data preparation : transformation of the non-continuous variables into factors##
 
 str(m)
 
@@ -463,16 +463,16 @@ m$repetition<-as.factor(m$repetition)
 m$out_shelter<-as.factor(m$out_shelter)
 
 
-##3? Exploration of the data in order to know in which direction to go for data treatment ##
+##3 Exploration of the data in order to know in which direction to go for data treatment ##
 
 summary(m)
 describeBy(m, group="treatment") #we are mainly looking for a potential effect of the PM treatment here
 
 
-####4? --- How time spent in shelter varied with repetition and treatment length of the individual? --- ####
+####4 --- How time spent in shelter varied with repetition and treatment length of the individual? --- ####
 
 
-##4?1 Model selection ##
+##4.1 Model selection ##
 
 #Distribution of the variable
 
@@ -525,7 +525,7 @@ table1 # better presentation of models' comparison, in a table
 M4bis <- lmer(predict_cumul_shelter~repetition + length + length:repetition +(1|fish), data=m, REML=T)
 
 ranova(M4bis) # check the random effect with the likelihood ratio test ; if the random variable is significant, it means that the model is worse without the random effect > keep the random effect.
-#p-value = 0.006211 : Keep the random effect
+#p-value = 0.005412: Keep the random effect
 
 tab <- tab_model(M4bis, p.val="kr", show.df=T, show.reflvl=T, p.style="stars")
 tab
@@ -535,15 +535,9 @@ save_kable(tab, file="aovCDIS.pdf") # ICC = 0.28. ICC < 0.3 so less probability 
 Anova(M4bis)#at least one of the means of the time spent in the shelter in repetition 1,2 or 3 is different from the others
 
 library(emmeans) #post hoc comparisons
-emmeans(M4bis,pairwise~repetition, adjust= "tukey")# pareil que Tukey HSD ? (car je gal?re ? l'utiliser)
-#no significant p-value ... ?
-#au cas o?
-TukeyHSD(m, lmer(predict_cumul_shelter~repetition + length + length:repetition +(1|fish), conf.level=.95))#post hoc comparisons: pairwise comparisons between the means of each group
-plot(m$predict_cumul_shelter~m$repetition)
+emmeans(M4bis,pairwise~repetition, adjust= "tukey")
 
-
-
-##4?2 Model validation ##
+##4.2 Model validation ##
 
 # Check for colinearity with the Variance Inflation Factor
 vif(M4bis) # GVIF <5 so no colinearity
@@ -551,7 +545,7 @@ vif(M4bis) # GVIF <5 so no colinearity
 # Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M4bis)~fitted(M4bis), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #integer (0) donc veut pas me l'afficher ...
+  abline(h=0, lty=2) 
 
 #Check for independence of residuals versus individual explanatory variables (marche pas non plus)
  
@@ -565,16 +559,15 @@ plot(resid(M4bis)~m$length, xlab="Length", ylab="Normalized residuals")+
 
 dev.off()
 
-#Check for normality of residuals (rien ne s'affiche...)
+#Check for normality of residuals
 
 hist(resid(M4bis))
-
 qqnorm(resid(M4bis))
 qqline(resid(M4bis))
 
 
-##4?3 Model vizualization ##
-#Effect of repetition
+##4.3 Model vizualization ##
+#Effect of repetition (play with the data)
 
 plot1bis<- ggplot(m) +
   aes(x = treatment, y = predict_cumul_shelter, colour = repetition) +
@@ -587,24 +580,9 @@ plot1bis<- ggplot(m) +
                size = 2, color = "black")
 plot1bis
 
-m$treatment <- factor(m$treatment, levels= levels (m$treatment[c("Controle", "Low", "High")]))
+##4.4 Repeatability ##
 
-matrixconcentration <- c("0, 5, 200")   
-plot1 <- ggplot(m) +
-  aes(x = treatment, y = predict_cumul_shelter, colour = repetition) +
-  geom_boxplot() +
-  xlab("Permethrin concentration during exposure (?g/L)")+
-  ylab("Time spent in the shelter (sec)")+
-  scale_color_hue(direction = 1) +
-  scale_x_discrete(breaks=c(0.5, 2 , 5), labels=c("Controle", "Low","High"))+
-  theme_minimal()+
-  stat_summary(fun = "mean", geom = "point", shape = 8,
-               size = 2, color = "black") #line= mean and asterisk = sd
-plot1 #pas de label sur l'axe x ??
-
-##4?4 Repeatability ##
-
-### Calculate conditional (adjusted) repeatability for each treatment
+# Calculate conditional (adjusted) repeatability for each treatment
 
 # The repeatability after controlling for the fixed effects.
 #https://cran.r-project.org/web/packages/rptR/vignettes/rptR.html 
@@ -612,28 +590,27 @@ plot1 #pas de label sur l'axe x ??
 tab1 <- m[m$treatment=="controle",] #subset of our data set "m" with only the lines concerning the treatment controle
 rpt1 <- rpt(predict_cumul_shelter~ repetition +(1|fish),grname=c("fish", "Fixed"), data= tab1, datatype="Gaussian", nboot=1000, npermut=0)#calculation of the repeatability for individuals of the controle treatment
 print(rpt1) # R  = 0.02:  the "control" fish do not differ from each other for the time spent in the shelter, over the repetitions
-#R for fixed effects: R  = 0.111 so it means that fixed effects are important in the model
-plot(rpt1, cex.main=1) # ?a sert ? voir les valeurs de r?p?tabilit? ? ?a prouve qd m?me que qql indivs ont s?rement une personnalit? ?
+#R for fixed effects: R  = 0.121 so it means that fixed effects are important in the model
+plot(rpt1, cex.main=1)
 
 
 tab2 <- m[m$treatment=="low",] 
-rpt2 <- rpt(predict_first_latency_arena~repetition+ (1|fish),grname=c("fish", "Fixed"), data= tab2, datatype="Gaussian", nboot=1000, npermut=0)
+rpt2 <- rpt(predict_cumul_shelter~repetition+ (1|fish),grname=c("fish", "Fixed"), data= tab2, datatype="Gaussian", nboot=1000, npermut=0)
 print(rpt2) #R for fish = 0.182 : the "low dose" fish do not differ from each other for the time spent in the shelter, over the repetitions
 plot(rpt2, cex.main=1)
 
 
 tab3 <- m[m$treatment=="high",] 
-rpt3 <- rpt(predict_first_latency_arena~repetition+ (1|fish),grname=c("fish", "Fixed"), data= tab3, datatype="Gaussian", nboot=1000, npermut=0)
+rpt3 <- rpt(predict_cumul_shelter~repetition+ (1|fish),grname=c("fish", "Fixed"), data= tab3, datatype="Gaussian", nboot=1000, npermut=0)
 print(rpt3)#R for Fish =  0.444 : the "high dose" fish do not differ from each other for the time spent in the shelter, over the repetitions
-
-plot(rpt3, cex.main=1)#
-
+plot(rpt3, cex.main=1)
 
 
 
-####5? --- How first latency in the arena varied with repetition and treatment length of the individual? --- ####
 
-##5?1 Model selection ##
+####5 --- How first latency in the arena varied with repetition and treatment length of the individual? --- ####
+
+##5.1 Model selection ##
 
 #Distribution of the variable
 
@@ -702,35 +679,34 @@ library(emmeans) #post hoc comparisons
 emmeans(M9bis,pairwise~repetition, adjust= "tukey")#significative difference between repetition 1 and 3
 
 
-##5?2 Model validation ##
+##5.2 Model validation ##
 
 # Check for colinearity with the Variance Inflation Factor : not applicable because there is only one explanatory variable
 
 # Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M9bis)~fitted(M9bis), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #integer (0) donc veut pas me l'afficher ...
+  abline(h=0, lty=2) 
 
 #Check for independence of residuals versus individual explanatory variables (marche pas non plus)
 
 par(mfrow=c(1,1), mar=c(4,4,.5,.5))
 
 plot(resid(M9bis)~m$repetition, xlab="Repetition", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #integer(0) ...
+  abline(h=0, lty=2)
 
 dev.off()
 
-#Check for normality of residuals (rien ne s'affiche...)
+#Check for normality of residuals 
 
 hist(resid(M9bis))#distribution of residuals does follow a normal distribution
-
 qqnorm(resid(M9bis))# ok
 qqline(resid(M9bis))# ok
 
 
-##5?3 Model vizualization ##
+##5.3 Model vizualization ##
 
-#Effect of repetition
+#Effect of repetition (play with the data)
 
 plot3 <- ggplot(m) +
   aes(x = treatment, y = predict_first_latency_arena, colour = repetition) +
@@ -743,23 +719,7 @@ plot3 <- ggplot(m) +
                size = 2, color = "black")
 plot3
 
-m$treatment <- factor(m$treatment, levels= levels (m$treatment[c("Controle", "Low", "High")]))
-
-matrixconcentration <- c("0, 5, 200")   
-plot1 <- ggplot(m) +
-  aes(x = treatment, y = predict_cumul_shelter, colour = repetition) +
-  geom_boxplot() +
-  xlab("Permethrin concentration during exposure (?g/L)")+
-  ylab("Time spent in the shelter (sec)")+
-  scale_color_hue(direction = 1) +
-  scale_x_discrete(breaks=c(0.5, 2 , 5), labels=c("Controle", "Low","High"))+
-  theme_minimal()+
-  stat_summary(fun = "mean", geom = "point", shape = 8,
-               size = 2, color = "black") #line= mean and asterisk = sd
-plot1 #pas de label sur l'axe x ??
-
-
-##4?4 Repeatability ##
+##4.4 Repeatability ##
 
 ### Calculate conditional (adjusted) repeatability for each treatment
 
@@ -786,9 +746,9 @@ plot(rpt6, cex.main=1)
 
 
 
-####6? --- How the ratio of  time in  the intern zone on the time spent in the arena varied with repetition, treatment and lenght of the individual? --- ####
+####6 --- How the ratio of  time in  the intern zone on the time spent in the arena varied with repetition, treatment and lenght of the individual? --- ####
 
-##6?1 Model selection ##
+##6.1 Model selection ##
 
 #Distribution of the variable
 m$cumularena <- (m$cumulative_duration_intern+ m$cumulative_duration_extern) #new column with the cumulated time in the arena (intern + extern parts)
@@ -802,54 +762,103 @@ newratio <- yeojohnson(m$ratio)
 x3 <- predict(newratio) 
 m$predict_ratio <- x3
 hist(m$predict_ratio)
-shapiro.test(m$predict_ratio) # p-value = 0.03392. Distribution is still not following a normal distribution
+shapiro.test(m$predict_ratio)
 #Model 
-library(dplyr)
-library(MASS)
-library(nlme)
-#glmm : Generalized Linear Mixed Model): not a GLM because here the data are dependent. Mixed because there is a random effect.
-glmmPQL1 <- glmmPQL(ratio~treatment + repetition + length + repetition:treatment + repetition:length, random=~1|fish, family = quasibinomial, data=m)
-glmm(PQL1)# bug: il me marque iteration 1, 2, 3 et 4.
+## Model selection
 
-##6?2 Model validation ##
-##6?3 Model vizualization ##
-#Effect of ?
+M7<- lmer(predict_ratio~treatment 
+          + repetition
+          + repetition:treatment
+          + (1|fish), data=m ,REML=T)
+Anova(M7)
+
+M7b<- lmer(predict_ratio~treatment 
+           + repetition
+           + repetition:treatment
+           + (1|fish), data=m ,REML=F)
+
+M8<- lmer(predict_ratio~treatment 
+          + repetition
+          + (1|fish), data=m ,REML=F)
+anova(M7b,M8)#M8: lower AIC
+Anova(M8)
+
+# Run the best model with REML=TRUE (for having the right p-value)
+M8b<- lmer(predict_ratio~treatment 
+          + repetition
+          + (1|fish), data=m ,REML=T)
+Anova(M8b)
+ranova(M8b) # check the random effect with the likelihood ratio test ; if the random variable is significant, it means that the model is worse without the random effect > keep the random effect. Here: Keep the random effect
+
+##5.2 Model validation ##
+
+# Check for homogeneity of variance: residuals vs predicted values
+
+plot(resid(M8b)~fitted(M8b), xlab="Predicted values", ylab="Normalized residuals")+
+  abline(h=0, lty=2) 
+
+# Check for homogeneity of variance: residuals vs predicted values
+
+hist(resid(M8b))#distribution of residuals does follow a normal distribution
+qqnorm(resid(M8b))# ok
+qqline(resid(M8b))# ok
+
+##6.3 Model vizualization ##
+#Effect of repetition (play with the data)
+
+plot5 <- ggplot(m) +
+  aes(x = treatment, y = predict_ratio, colour = repetition) +
+  geom_boxplot() +
+  scale_color_hue(direction = 1) +
+  xlab("Permethrin treatment")+
+  ylab("Total distance moved in the arena (cm)")+
+  theme_minimal()+ 
+  stat_summary(fun = "mean", geom = "point", shape = 8,
+               size = 2, color = "black")
+plot5
+
+
+
+### Calculate conditional (adjusted) repeatability for each treatment
+
+tab1 <- m[m$treatment=="controle",] 
+rpt1 <- rpt(predict_ratio~ repetition +(1|fish),grname=c("fish", "Fixed"), data= tab1, datatype="Gaussian", nboot=1000, npermut=0)
+print(rpt1)
+plot(rpt1, cex.main=1)
+
+
+tab2 <- m[m$treatment=="low",] 
+rpt2 <- rpt(predict_ratio~repetition+ (1|fish),grname=c("fish", "Fixed"), data= tab2, datatype="Gaussian", nboot=1000, npermut=0)
+print(rpt2) 
+plot(rpt2, cex.main=1)
+
+
+tab3 <- m[m$treatment=="high",] 
+rpt3 <- rpt(predict_ratio~repetition+ (1|fish),grname=c("fish", "Fixed"), data= tab3, datatype="Gaussian", nboot=1000, npermut=0)
+print(rpt3)
+plot(rpt3, cex.main=1)
 
 
 
 
+####7--- How the total distance moved in the arena varied with repetition, treatment and length of the individual ? --- ####
 
-####7?--- How the total distance moved in the arena varied with repetition, treatment and length of the individual ? --- ####
-
-##7?1 Model selection ##
+##7.1 Model selection ##
 #Distribtution of the variable
 
-m$newreltdm <- m$total_relative_distance/m$length #creation of the variable total distance moved divided by the lenght  
+m$newreltdm <- m$total_relative_distance/m$length #creation of the variable total distance moved divided by the length
 head(m)
 
 hist(m$newreltdm) # does not follow a normal distribution
 library(bestNormalize) 
-bestNormalize(m$newreltdm) # Standardized Box Cox Transformation. lambda = 0.237862. mean (before standardization) = 11.2422. sd (before standardization) = 5.496728
-
-Boxcox #bug
-
-newrelativetdm <- boxcox(m$newreltdm)
-x4 <- predict(newrelativetdm)
-m$predict_rtdm <- x4
-
-hist(m$predict_rtdm)
-shapiro.test(m$predict_rtdm) 
-
-hist(m$newreltdm) # distribution does not follow a normal distribution
-
-# test avec Yeo Johnson
+bestNormalize(m$newreltdm)
 
 newrelativetdm <- yeojohnson(m$newreltdm) 
 x4 <- predict(newrelativetdm) 
 m$predict_rtdm <- x4 
 
 hist(m$predict_rtdm) #distribution follows a normal distribution
-shapiro.test(m$predict_rtdm) #p-value = 0.07074 so normal distribution
+shapiro.test(m$predict_rtdm) #normal distribution
 
 #Model
 
@@ -895,26 +904,24 @@ library(emmeans) #post hoc comparisons
 emmeans(M12bis,pairwise~repetition, adjust= "tukey")#significative difference between repetitions 1-3, and repetitions 1-2
 
 
-
-##7?2 Model validation ##
+##7.2 Model validation ##
 
 # Check for colinearity with the Variance Inflation Factor : not applicable because there is only one explanatory variable
 
 # Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M12bis)~fitted(M12bis), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #integer (0) donc veut pas me l'afficher ...
-
-#Check for independence of residuals versus individual explanatory variables (marche pas non plus)
+  abline(h=0, lty=2)
+# Check for independence of residuals versus individual explanatory variables
 
 par(mfrow=c(1,1), mar=c(4,4,.5,.5))
 
 plot(resid(M12bis)~m$repetition, xlab="Repetition", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #integer(0) ...
+  abline(h=0, lty=2) 
 
 dev.off()
 
-#Check for normality of residuals (rien ne s'affiche...)
+#Check for normality of residuals
 
 hist(resid(M12bis))#distribution of residuals does follow a normal distribution
 shapiro.test(resid(M12bis))# p-value = 0.7628 : normal distribution
@@ -922,8 +929,8 @@ qqnorm(resid(M12bis))# ok
 qqline(resid(M12bis))# ok
 
 
-##7?3 Model vizualization ##
-#Effect of the repetition
+##7.3 Model vizualization ##
+#Effect of the repetition (play with the data)
 
 plot4 <- ggplot(m) +
   aes(x = treatment, y = predict_rtdm, colour = repetition) +
@@ -938,7 +945,7 @@ plot4
 
 
 
-####8?--- ACP --- ####
+####8--- ACP --- ####
 
 
 ###### PM impact on relative genetic expression ######
