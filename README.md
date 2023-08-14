@@ -330,7 +330,7 @@ barplot(matweigth
         ,ylab=" Fish body weight at 140 dph (g)"
         ,cex.lab=1.15
         ,xlim=c(0,5.5)
-        ,ylim=c(0,0.3)
+        ,ylim=c(0,0.2)
         ,lwd = 2
         ,pch=16
         ,axes=FALSE
@@ -338,19 +338,18 @@ barplot(matweigth
         ,col=c("white","grey","grey30"))
 
 axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1)
-axis(side=2,at=c(0,0.05,0.1,0.15,0.2,0.25,0.3),cex.axis=1,las=2)
+axis(side=2,at=c(0,0.05,0.1,0.15,0.2),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
 
-text(0.5,0.15,"a")
-text(2.5,0.152,"a")
-text(4.5,0.178,"a")
+text(0.5,0.145,"a")
+text(2.5,0.145,"a")
+text(4.5,0.172,"a")
 
 #errors bars
 arrows(0.5, meanss1 - errorss1, 0.5,meanss1 + errorss1, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(2.5, meanss2 - errorss2, 2.5,meanss2 + errorss2, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(4.5, meanss3 - errorss3, 4.5,meanss3 + errorss3, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-
 
 
 ##### --- FECUNDITY --- #####
@@ -380,6 +379,7 @@ anova(mod3,test = "Chisq") #p-value= 0.08651 so no significant effect of the tre
 
 # Barplot : probability of hatching for an individual in each treatment 
 
+fecundity$sexual_maturity <- as.numeric(fecundity$sexual_maturity) 
 mature <- fecundity[fecundity$sexual_maturity=="1",] #subset of the "mature" individuals
 view(mature)
 
@@ -392,31 +392,31 @@ propmaturehd <- 4/6 #proportion of individuals which have hatched within the tre
 matobsmature <-matrix(c(propmaturecontrole,propmatureld,propmaturehd),nrow=1,dimnames=list(c("")))
 
 
-barplot(matobsmature
+  barplot(matobsmature
         ,beside = TRUE
         , horiz = FALSE
         , legend.text = FALSE
-        ,xlab="Permethrin concentration during exposure (?g/L)"
-        ,ylab="Proportion of individuals that have laid eggs"
-        ,cex.lab=1.2
+        ,xlab="Permethrin concentration during exposure (µg/L)"
+        ,ylab="Probability of laying"
+        ,cex.lab=1
         ,xlim=c(0,5.5)
         ,ylim=c(0,1)
         ,lwd = 2
         ,pch=16
         ,axes=FALSE
         ,space=c(0,1,1)
-        ,col=c("blue","green","red")) 
+        ,col=c("white","grey","grey30"))
 
 axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1) 
-axis(side=2,at=c(0,0.4,0.8,1.2, 1.6),cex.axis=1,las=2)
+axis(side=2,at=c(0,0.2,0.4,0.6,0.8,1),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
 
-text(0.5,1,"a")  
-text(2.5,1.6,"a")
-text(4.5,1.7,"a")
+text(0.5,0.24,"a")  
+text(2.5,0.42,"a")
+text(4.5,0.72,"a")
 
-##6? Descriptive statistics on the "mature" individuals (N too low) ##
+##6 Descriptive statistics on the "mature" individuals (N too low) ##
 
 #a) Total number of eggs hatched
 
@@ -424,13 +424,13 @@ summary(mature$total_eggs) #mean, median, min, max
 
 hist(mature$total_eggs) # distribution on the left
 
-summary(mature$total_eggs[mature$treatment== "Controle"])
-summary(mature$total_eggs[mature$treatment== "Low"])
-summary(mature$total_eggs[mature$treatment== "High"])
+summary(mature$total_eggs[mature$treatment== "control"])#mean=6.333
+summary(mature$total_eggs[mature$treatment== "low"])#mean=10
+summary(mature$total_eggs[mature$treatment== "high"])#mean=12
 
-sd(mature$total_eggs[mature$treatment=="Controle"]) #6.806859
-sd(mature$total_eggs[mature$treatment=="Low"])#8.774964
-sd(mature$total_eggs[mature$treatment=="High"])#3.559026
+sd(mature$total_eggs[mature$treatment=="control"]) #6.806859
+sd(mature$total_eggs[mature$treatment=="low"])#8.774964
+sd(mature$total_eggs[mature$treatment=="high"])#3.559026
 
 #b) Age of the first hatching
 
@@ -438,16 +438,15 @@ summary(mature$age_first_egg)
 
 hist(mature$age_first_egg) # distribution on the left
 
-summary(mature$age_first_egg[mature$treatment== "Controle"])
-summary(mature$age_first_egg[mature$treatment== "Low"])
-summary(mature$age_first_egg[mature$treatment== "High"])
+summary(mature$age_first_egg[mature$treatment== "control"])#mean=132.7
+summary(mature$age_first_egg[mature$treatment== "low"])#mean=135.6
+summary(mature$age_first_egg[mature$treatment== "high"])#mean=136.0
 
-sd(mature$age_first_egg[mature$treatment=="Controle"]) #3.21455
-sd(mature$age_first_egg[mature$treatment=="Low"])#5.549775
-sd(mature$age_first_egg[mature$treatment=="High"])#1.414214
+sd(mature$age_first_egg[mature$treatment=="control"]) #3.21455
+sd(mature$age_first_egg[mature$treatment=="low"])#5.549775
+sd(mature$age_first_egg[mature$treatment=="high"])#1.414214
 
 
-#c): the occurence of hatching ?
 ###### PM impact on personality traits (boldness - shyness) ######
 
 ##1? Shelter data loading ##
