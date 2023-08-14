@@ -449,7 +449,7 @@ sd(mature$age_first_egg[mature$treatment=="high"])#1.414214
 
 ###### PM impact on personality traits (boldness - shyness) ######
 
-##1 Shelter data loading ##
+## 1 Shelter data loading ##
 
 m <-read.table("memoire_cassandra.txt", header=T)
 head(m,n=3)
@@ -520,7 +520,7 @@ table1 <- anova %>% kbl(caption="AOV") %>% kable_classic("striped",full_width=F)
   column_spec(1, bold=T)
 table1 # better presentation of models' comparison, in a table
 
-# Run the best model with REML=TRUE (for having the right p-value)
+#Run the best model with REML=TRUE (for having the right p-value)
 
 M4bis <- lmer(predict_cumul_shelter~repetition + length + length:repetition +(1|fish), data=m, REML=T)
 
@@ -539,10 +539,10 @@ emmeans(M4bis,pairwise~repetition, adjust= "tukey")
 
 ##4.2 Model validation ##
 
-# Check for colinearity with the Variance Inflation Factor
+#Check for colinearity with the Variance Inflation Factor
 vif(M4bis) # GVIF <5 so no colinearity
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M4bis)~fitted(M4bis), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2) 
@@ -614,9 +614,9 @@ text(4.5,1580,"a,b")
 
 ##4.4 Repeatability ##
 
-# Calculate conditional (adjusted) repeatability for each treatment
+#Calculate conditional (adjusted) repeatability for each treatment
 
-# The repeatability after controlling for the fixed effects.
+#The repeatability after controlling for the fixed effects.
 #https://cran.r-project.org/web/packages/rptR/vignettes/rptR.html 
 
 tab1 <- m[m$treatment=="controle",] #subset of our data set "m" with only the lines concerning the treatment controle
@@ -640,7 +640,7 @@ plot(rpt3, cex.main=1)
 
 
 
-####5 --- How first latency in the arena varied with repetition and treatment length of the individual? --- ####
+#### 5 --- How first latency in the arena varied with repetition and treatment length of the individual? --- ####
 
 ##5.1 Model selection ##
 
@@ -693,7 +693,7 @@ table2 <- anova2 %>% kbl(caption="AOV") %>% kable_classic("striped",full_width=F
   column_spec(1, bold=T)
 table2 # better presentation of models' comparison, in a table
 
-# Run the best model with REML=TRUE (for having the right p-value)
+#Run the best model with REML=TRUE (for having the right p-value)
 
 M9bis <- lmer(predict_first_latency_arena~repetition+ (1|fish), data=m, REML=T)
 
@@ -713,9 +713,9 @@ emmeans(M9bis,pairwise~repetition, adjust= "tukey")#significative difference bet
 
 ##5.2 Model validation ##
 
-# Check for colinearity with the Variance Inflation Factor : not applicable because there is only one explanatory variable
+#Check for colinearity with the Variance Inflation Factor : not applicable because there is only one explanatory variable
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M9bis)~fitted(M9bis), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2) 
@@ -784,7 +784,7 @@ text(4.5, 760,"b")
 
 ##4.4 Repeatability ##
 
-### Calculate conditional (adjusted) repeatability for each treatment
+###Calculate conditional (adjusted) repeatability for each treatment
 
 tab1 <- m[m$treatment=="controle",] #subset of our data set "m" with only the lines concerning the treatment controle
 rpt4 <- rpt(predict_first_latency_arena~ repetition +(1|fish),grname=c("fish", "Fixed"), data= tab1, datatype="Gaussian", nboot=1000, npermut=0)#calculation of the repeatability for individuals of the controle treatment
@@ -809,7 +809,7 @@ plot(rpt6, cex.main=1)
 
 
 
-####6 --- How the ratio of  time in  the intern zone on the time spent in the arena varied with repetition, treatment and lenght of the individual? --- ####
+#### 6 --- How the ratio of  time in  the intern zone on the time spent in the arena varied with repetition, treatment and lenght of the individual? --- ####
 
 ##6.1 Model selection ##
 
@@ -826,8 +826,8 @@ x3 <- predict(newratio)
 m$predict_ratio <- x3
 hist(m$predict_ratio)
 shapiro.test(m$predict_ratio)
-#Model 
-## Model selection
+
+##Model 
 
 M7<- lmer(predict_ratio~treatment 
           + repetition
@@ -846,7 +846,7 @@ M8<- lmer(predict_ratio~treatment
 anova(M7b,M8)#M8: lower AIC
 Anova(M8)
 
-# Run the best model with REML=TRUE (for having the right p-value)
+#Run the best model with REML=TRUE (for having the right p-value)
 M8b<- lmer(predict_ratio~treatment 
           + repetition
           + (1|fish), data=m ,REML=T)
@@ -855,12 +855,12 @@ ranova(M8b) # check the random effect with the likelihood ratio test ; if the ra
 
 ##5.2 Model validation ##
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M8b)~fitted(M8b), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2) 
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 hist(resid(M8b))#distribution of residuals does follow a normal distribution
 qqnorm(resid(M8b))# ok
@@ -913,7 +913,7 @@ text(4.5,0.165,"b")
 
 
 
-### Calculate conditional (adjusted) repeatability for each treatment
+###Calculate conditional (adjusted) repeatability for each treatment
 
 tab1 <- m[m$treatment=="controle",] 
 rpt1 <- rpt(predict_ratio~ repetition +(1|fish),grname=c("fish", "Fixed"), data= tab1, datatype="Gaussian", nboot=1000, npermut=0)
@@ -935,7 +935,7 @@ plot(rpt3, cex.main=1)
 
 
 
-####7--- How the total distance moved in the arena varied with repetition, treatment and length of the individual ? --- ####
+#### 7--- How the total distance moved in the arena varied with repetition, treatment and length of the individual ? --- ####
 
 ##7.1 Model selection ##
 #Distribtution of the variable
@@ -980,7 +980,7 @@ table4 <- anova4 %>% kbl(caption="AOV") %>% kable_classic("striped",full_width=F
   column_spec(1, bold=T)
 table4 # better presentation of models' comparison, in a table
 
-# Run the best model with REML=TRUE (for having the right p-value)
+#Run the best model with REML=TRUE (for having the right p-value)
 
 M12bis <- lmer(predict_rtdm~repetition + (1|fish), data=m, REML=T)
 
@@ -1000,13 +1000,13 @@ emmeans(M12bis,pairwise~repetition, adjust= "tukey")#significative difference be
 
 ##7.2 Model validation ##
 
-# Check for colinearity with the Variance Inflation Factor : not applicable because there is only one explanatory variable
+#Check for colinearity with the Variance Inflation Factor : not applicable because there is only one explanatory variable
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(M12bis)~fitted(M12bis), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2)
-# Check for independence of residuals versus individual explanatory variables
+#Check for independence of residuals versus individual explanatory variables
 
 par(mfrow=c(1,1), mar=c(4,4,.5,.5))
 
@@ -1036,7 +1036,7 @@ moy22<-mean((m$newreltdm[m$repetition=="three"]))
 erreur22<-(sd((m$newreltdm[m$repetition=="three"])))/(sqrt(length((m$newreltdm[m$repetition=="three"]))))
 
 
-####8--- ACP --- ####
+#### 8--- ACP --- ####
 
 m <-read.table("memoire_cassandra_csv2.csv", header=T, sep =";", dec = ".")
 m$cumularena <- (m$cumulative_duration_intern + m$cumulative_duration_extern) #new column with the cumulated time in the arena (intern + extern parts)
@@ -1098,7 +1098,7 @@ chart.Correlation(as.matrix(nrwm[,c(4,9,10,14,15)]), histogram = T,pch=19)
 
 
 ###### PM impact on relative genetic expression ######
-## Data loading and preparation ##
+##Data loading and preparation ##
 
 expression<-read.table("relative_gene_expression_cassandra_csv.csv", header=T, sep =";", dec = "." )
 head(expression) 
@@ -1110,9 +1110,9 @@ expression$gene<-as.factor(expression$gene)
 expression$relative_gene_expression<-as.numeric(expression$relative_gene_expression)
 
 
-####1 --- NipbL --- #####
+#### 1 --- NipbL --- #####
 
-## NipBL data preparation ##
+##NipBL data preparation ##
 nipbl <- expression[expression$gene=="nipbl",] #subset of the dataframe expression with only lines concerning nipbl
 
 hist(nipbl$relative_gene_expression)#does not follow a normal distribution
@@ -1128,15 +1128,15 @@ nipbl$predict_REG <- y1
 
 hist(nipbl$predict_REG)#does follow a normal distribution
 
-## Model preparation ##
+##Model preparation ##
 
 mod1 <- aov(predict_REG ~ treatment, data= nipbl)
 summary(mod1)# p-value=0.374 : no nipbl genetic expression's mean is significantly different from a treatment to another
 shapiro.test(resid(mod1)) #residues normality is followed 
 
-## Model validation ##
+##Model validation ##
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(mod1)~fitted(mod1), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2) 
@@ -1157,7 +1157,7 @@ qqline(resid(mod1))# ok m
 shapiro.test(nipbl$predict_REG)#p-value=1 
 
 
-## Model visualization ##
+##Model visualization ##
 
 meanlc7<-mean((nipbl$relative_gene_expression[nipbl$treatment=="control"]))
 errorlc7<-(sd((nipbl$relative_gene_expression[nipbl$treatment=="control"])))/(sqrt(length((nipbl$relative_gene_expression[nipbl$treatment=="control"]))))
@@ -1200,8 +1200,8 @@ text(2.5,0.2,"a")
 text(4.5,0.215,"a")
 
 
-####2--- DNMT3a1 --- #####
-## DNMT3a1 data preparation ##
+#### 2--- DNMT3a1 --- #####
+##DNMT3a1 data preparation ##
 dnmt3a <- expression[expression$gene=="dnmt3a1_",] #subset of the dataframe expression with only lines concerning dnmt3a
 
 hist(dnmt3a$relative_gene_expression)#does not follow a normal distribution
@@ -1217,7 +1217,7 @@ dnmt3a$predict_REG <- y2
 
 hist(dnmt3a$predict_REG)#not sure it does follow a normal distribution
 shapiro.test(dnmt3a$predict_REG)#p-value = 0.1757 : does follow a normal distribution
-## Model preparation ##
+##Model preparation ##
 
 
 mod2 <- aov(predict_REG ~ treatment, data= dnmt3a)
@@ -1225,9 +1225,9 @@ summary(mod2)# no dnmt3a genetic expression's mean is significantly different fr
 shapiro.test(resid(mod2))# normal distribution
 
 
-## Model validation ##
+##Model validation ##
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(mod2)~fitted(mod2), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2) 
@@ -1247,7 +1247,7 @@ qqnorm(resid(mod2))# ok
 qqline(resid(mod2))# ok 
 
 
-## Model visualization ##
+##Model visualization ##
 
 meanlc11<-mean((dnmt3a$relative_gene_expression[dnmt3a$treatment=="control"]))
 errorlc11<-(sd((dnmt3a$relative_gene_expression[dnmt3a$treatment=="control"])))/(sqrt(length((dnmt3a$relative_gene_expression[dnmt3a$treatment=="control"]))))
@@ -1291,10 +1291,10 @@ text(4.5,0.45,"a")
 
 
 
-####3 --- Mecp2 --- #####
+#### 3 --- Mecp2 --- #####
 
 
-## Mecp2 data preparation ##
+##Mecp2 data preparation ##
 
 mecp2 <- expression[expression$gene=="mecp2_",] #subset of the dataframe expression with only lines concerning mecp2
 
@@ -1314,15 +1314,15 @@ shapiro.test(mecp2$predict_REG)#does follow a normal distribution
 
 
 
-## Model preparation ##
+##Model preparation ##
 
 mod3 <- aov(predict_REG ~ treatment, data= mecp2)
 summary(mod3)# p-value=0.543 : no mecp2 genetic expression's mean is significantly different from a treatment to another
 
 
-## Model validation ##
+##Model validation ##
 
-# Check for homogeneity of variance: residuals vs predicted values
+#Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(mod3)~fitted(mod3), xlab="Predicted values", ylab="Normalized residuals")+
   abline(h=0, lty=2) 
@@ -1342,7 +1342,7 @@ qqnorm(resid(mod3))
 qqline(resid(mod3))# ok 
 
 
-## Model visualization ##
+##Model visualization ##
 
 meanlc14<-mean((mecp2$relative_gene_expression[mecp2$treatment=="control"]))
 errorlc14<-(sd((mecp2$relative_gene_expression[mecp2$treatment=="control"])))/(sqrt(length((mecp2$relative_gene_expression[mecp2$treatment=="control"]))))
@@ -1386,7 +1386,7 @@ text(4.5,0.53,"a")
 
 
 
-####4 --- ACP --- ####
+#### 4 --- ACP --- ####
 
 install.packages("ade4")
 install.packages("factoextra")
