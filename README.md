@@ -567,18 +567,50 @@ qqline(resid(M4bis))
 
 
 ##4.3 Model vizualization ##
-#Effect of repetition (play with the data)
+#Effect of repetition 
 
-plot1bis<- ggplot(m) +
-  aes(x = treatment, y = predict_cumul_shelter, colour = repetition) +
-  geom_boxplot() +
-  scale_color_hue(direction = 1) +
-  xlab("Permethrin treatment")+
-  ylab("Time spent in the shelter (sec)")+
-  theme_minimal()+ 
-  stat_summary(fun = "mean", geom = "point", shape = 8,
-               size = 2, color = "black")
-plot1bis
+moy1<-mean((m$cumulative_time_shelter[m$repetition=="one"]))
+erreur1<-(sd((m$cumulative_time_shelter[m$repetition =="one"])))/((length((m$cumulative_time_shelter[m$repetition=="one"]))))
+
+moy2<-mean((m$cumulative_time_shelter[m$repetition=="two"]))
+erreur2<-(sd((m$cumulative_time_shelter[m$repetition=="two"])))/(sqrt(length((m$cumulative_time_shelter[m$repetition=="two"]))))
+
+moy3<-mean((m$cumulative_time_shelter[m$repetition=="three"]))
+erreur3<-(sd((m$cumulative_time_shelter[m$repetition=="three"])))/(sqrt(length((m$cumulative_time_shelter[m$repetition=="three"]))))
+
+
+matshelter <-matrix(c(moy1,moy2,moy3),nrow=1,dimnames=list(c("")))
+
+p1 <- barplot(matshelter
+              ,beside = TRUE
+              , horiz = FALSE
+              , legend.text = FALSE
+              ,xlab="Repetition"
+              ,ylab="Time spent in the shelter (sec)"
+              ,cex.lab=1.2
+              ,xlim=c(0,5.5)
+              ,ylim=c(0,1800)
+              ,lwd = 2
+              ,pch=16
+              ,axes=FALSE
+              ,space=c(0,1,1)
+              ,col=c("white","grey","grey30"))
+
+axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("1","2","3"),tick=FALSE,cex.axis=1) 
+axis(side=2,at=c(0,200,400,600, 800, 1000, 1200,1400, 1600, 1800),cex.axis=1,las=2)
+abline(h= 0, col = "black")
+
+#errors bars
+arrows(0.5, moy1 - erreur1, 0.5,moy1 + erreur1, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(2.5, moy2 - erreur2, 2.5,moy2 + erreur2, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(4.5, moy3 - erreur3, 4.5,moy3 + erreur3, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+
+text(0.5,1200,"a")  
+text(2.5,1590,"b")
+text(4.5,1580,"a,b")
+
+
+
 
 ##4.4 Repeatability ##
 
@@ -706,18 +738,49 @@ qqline(resid(M9bis))# ok
 
 ##5.3 Model vizualization ##
 
-#Effect of repetition (play with the data)
+#Effect of repetition 
 
-plot3 <- ggplot(m) +
-  aes(x = treatment, y = predict_first_latency_arena, colour = repetition) +
-  geom_boxplot() +
-  scale_color_hue(direction = 1) +
-  xlab("Permethrin treatment")+
-  ylab("First latency to the arena (sec)")+
-  theme_minimal()+ 
-  stat_summary(fun = "mean", geom = "point", shape = 8,
-               size = 2, color = "black")
-plot3
+moy4<-mean((m$latency_to_first_extern[m$repetition=="one"]))
+erreur4<-(sd((m$latency_to_first_extern[m$repetition =="one"])))/((length((m$latency_to_first_extern[m$repetition=="one"]))))
+
+moy5<-mean((m$latency_to_first_extern[m$repetition=="two"]))
+erreur5<-(sd((m$latency_to_first_extern[m$repetition=="two"])))/(sqrt(length((m$latency_to_first_extern[m$repetition=="two"]))))
+
+moy6<-mean((m$latency_to_first_extern[m$repetition=="three"]))
+erreur6<-(sd((m$latency_to_first_extern[m$repetition=="three"])))/(sqrt(length((m$latency_to_first_extern[m$repetition=="three"]))))
+
+
+matlatency <-matrix(c(moy4,moy5,moy6),nrow=1,dimnames=list(c("")))
+
+p1 <- barplot(matlatency
+              ,beside = TRUE
+              , horiz = FALSE
+              , legend.text = FALSE
+              ,xlab="Repetition"
+              ,ylab="First latency in the arena (sec)"
+              ,cex.lab=1
+              ,xlim=c(0,5.5)
+              ,ylim=c(0,850)
+              ,lwd = 2
+              ,pch=16
+              ,axes=FALSE
+              ,space=c(0,1,1)
+              ,col=c("white","grey","grey30"))
+
+axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("1","2","3"),tick=FALSE,cex.axis=1) 
+axis(side=2,at=c(0,200,400,600, 800),cex.axis=1,las=2)
+abline(h= 0, col = "black")
+
+#errors bars
+arrows(0.5, moy4 - erreur1, 0.5,moy4 + erreur4, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(2.5, moy5 - erreur5, 2.5,moy5 + erreur5, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(4.5, moy6 - erreur6, 4.5,moy6 + erreur6, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+
+text(0.5,400,"a")  
+text(2.5,570,"a,b")
+text(4.5, 760,"b")
+
+
 
 ##4.4 Repeatability ##
 
@@ -804,18 +867,49 @@ qqnorm(resid(M8b))# ok
 qqline(resid(M8b))# ok
 
 ##6.3 Model vizualization ##
-#Effect of repetition (play with the data)
+#Effect of repetition 
 
-plot5 <- ggplot(m) +
-  aes(x = treatment, y = predict_ratio, colour = repetition) +
-  geom_boxplot() +
-  scale_color_hue(direction = 1) +
-  xlab("Permethrin treatment")+
-  ylab("Total distance moved in the arena (cm)")+
-  theme_minimal()+ 
-  stat_summary(fun = "mean", geom = "point", shape = 8,
-               size = 2, color = "black")
-plot5
+moy7<-mean((m$ratio[m$repetition=="one"]))
+erreur7<-(sd((m$ratio[m$repetition =="one"])))/((length((m$ratio[m$repetition=="one"]))))
+
+moy8<-mean((m$ratio[m$repetition=="two"]))
+erreur8<-(sd((m$ratio[m$repetition=="two"])))/(sqrt(length((m$ratio[m$repetition=="two"]))))
+
+moy9<-mean((m$ratio[m$repetition=="three"]))
+erreur9<-(sd((m$ratio[m$repetition=="three"])))/(sqrt(length((m$ratio[m$repetition=="three"]))))
+
+
+matratio <-matrix(c(moy7,moy8,moy9),nrow=1,dimnames=list(c("")))
+
+p1 <- barplot(matratio
+              ,beside = TRUE
+              , horiz = FALSE
+              , legend.text = FALSE
+              ,xlab="Repetition"
+              ,ylab="Ratio I/A"
+              ,cex.lab=1.2
+              ,xlim=c(0,5.5)
+              ,ylim=c(0,0.6)
+              ,lwd = 2
+              ,pch=16
+              ,axes=FALSE
+              ,space=c(0,1,1)
+              ,col=c("white","grey","grey30"))
+
+axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("1","2","3"),tick=FALSE,cex.axis=1) 
+axis(side=2,at=c(0,0.2,0.4,0.6),cex.axis=1,las=2)
+abline(h= 0, col = "black")
+
+#errors bars
+arrows(0.5, moy7 - erreur7, 0.5,moy7 + erreur7, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(2.5, moy8 - erreur8, 2.5,moy8 + erreur8, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(4.5, moy9 - erreur9, 4.5,moy9 + erreur9, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+
+text(0.5,0.25,"a")  
+text(2.5,0.2,"b")
+text(4.5,0.165,"b")
+
+
 
 
 
@@ -930,22 +1024,77 @@ qqline(resid(M12bis))# ok
 
 
 ##7.3 Model vizualization ##
-#Effect of the repetition (play with the data)
+#Just play with the data because no significative effect of repetition
 
-plot4 <- ggplot(m) +
-  aes(x = treatment, y = predict_rtdm, colour = repetition) +
-  geom_boxplot() +
-  scale_color_hue(direction = 1) +
-  xlab("Permethrin treatment")+
-  ylab("Total distance moved in the arena (cm)")+
-  theme_minimal()+ 
-  stat_summary(fun = "mean", geom = "point", shape = 8,
-               size = 2, color = "black")
-plot4
+moy20<-mean((m$newreltdm[m$repetition=="one"]))
+erreur20<-(sd((m$newreltdm[m$repetition =="one"])))/((length((m$newreltdm[m$repetition=="one"]))))
 
+moy21<-mean((m$newreltdm[m$repetition=="two"]))
+erreur21<-(sd((m$newreltdm[m$repetition=="two"])))/(sqrt(length((m$newreltdm[m$repetition=="two"]))))
+
+moy22<-mean((m$newreltdm[m$repetition=="three"]))
+erreur22<-(sd((m$newreltdm[m$repetition=="three"])))/(sqrt(length((m$newreltdm[m$repetition=="three"]))))
 
 
 ####8--- ACP --- ####
+
+m <-read.table("memoire_cassandra_csv2.csv", header=T, sep =";", dec = ".")
+m$cumularena <- (m$cumulative_duration_intern + m$cumulative_duration_extern) #new column with the cumulated time in the arena (intern + extern parts)
+m$ratio <- m$cumulative_duration_intern/(m$cumularena) #new column with the new variable needed for analysis
+m$newreltdm <- m$total_relative_distance/(m$length * m$cumularena)#creation of the variable total distance moved divided by the lenght  
+
+str(m)
+
+install.packages("ade4")
+install.packages("factoextra")
+library("ade4")#for the function dudi.pca
+library("factoextra")#for extraction and easy+quick visualisation of results of ACP
+
+m <- na.omit(m)
+n <- nrow(m) #new vector that contains a number equal to the number of lines in m
+p <- ncol(m)#new vector that contains a number equal to the number of columns in m
+
+newm<- rename(m, c("FL arena"="latency_to_first_extern", "CT shelter"="cumulative_time_shelter","TDM"="newreltdm", "ratio I/A"="ratio"))
+str(newm)
+
+test1 <- dudi.pca(newm[,c(9,10,14,15)], scannf = F, nf = p)#na entries in table
+
+
+fviz_pca_biplot(test1,  col.ind=m$treatment, labelsize=3,
+                pointsize = ,
+                #addEllipses = TRUE,
+                title = "Contribution des lignes au plan 1-2",
+                gradient.cols=c("red", "gold", "forestgreen"))# Biplot of individuals and variables. Shape and color per treatment
+#label size depends on the individual's contribution
+
+
+fviz_pca_var(test1, col.var = "contrib",
+title = "Cercle des correlations selon le plan 1-2",
+gradient.cols=c("red", "gold", "forestgreen"))
+#Grape of variables'contribution tp the acp (plan 1-2).
+#acp visualization via a variables'correlation circle shape, based on ggplot2, with a dimensions'reduction while minimizing the loss of information
+#colours gradient depending on contribution'value
+#newreltdm and cumulative time shelter contribute the most 
+
+
+fviz_pca_var(acp, axes=c(1,2), 
+             title = "Cercle des correlations selon le plan 1-2")
+
+
+fviz_pca_var(test1, axes=c(2,3),col.var = "contrib",
+             title = "Cercle des correlations selon le plan 1-2",
+             gradient.cols=c("red", "gold", "forestgreen"))#TDM is better explicated here
+
+
+####8--- Correlation matrix --- ####
+
+library(Hmisc)
+library(corrplot)
+library(PerformanceAnalytics)
+correlation <- rcorr(as.matrix(newm[,c(4,9,10,14,15)]), type = "spearman") 
+correlation
+corrplot(correlation$r, type="upper", order="hclust", p.mat=correlation$P, sig.level=0.01, insig="blank", tl.cex=0.7  ,tl.col="black",tl.srt=45)
+chart.Correlation(as.matrix(nrwm[,c(4,9,10,14,15)]), histogram = T,pch=19)
 
 
 ###### PM impact on relative genetic expression ######
@@ -1051,7 +1200,7 @@ text(2.5,0.2,"a")
 text(4.5,0.215,"a")
 
 
-####2?--- DNMT3a1 --- #####
+####2--- DNMT3a1 --- #####
 ## DNMT3a1 data preparation ##
 dnmt3a <- expression[expression$gene=="dnmt3a1_",] #subset of the dataframe expression with only lines concerning dnmt3a
 
@@ -1142,7 +1291,7 @@ text(4.5,0.45,"a")
 
 
 
-####3? --- Mecp2 --- #####
+####3 --- Mecp2 --- #####
 
 
 ## Mecp2 data preparation ##
@@ -1237,5 +1386,47 @@ text(4.5,0.53,"a")
 
 
 
-####5 --- ACP --- ####
+####4 --- ACP --- ####
+
+install.packages("ade4")
+install.packages("factoextra")
+library("ade4")#for using dudi.pca function
+library("factoextra")#facilitate the vizualisation (easier and quicker) of PCA results
+
+acp <-read.table("acp_genes.txt", header=T) 
+head(acp)
+str(acp)
+
+acp <- na.omit(acp)
+
+n <- nrow(acp) 
+p <- ncol(acp)
+
+test <- dudi.pca(acp[,3:5], scannf = F, nf = p)#na entries in table
+
+
+fviz_pca_biplot(test,  col.ind=acp$treatment, labelsize=3,
+                pointsize = ,
+                #addEllipses = TRUE,
+                title = "Contribution des lignes au plan 1-2",
+                gradient.cols=c("red", "gold", "forestgreen"))
+#legend.title=list(fill="treatment", color="Contribution"))
+
+#graph of the contribution of individuals (plan 1-2)
+
+
+fviz_pca_var(test, col.var = "contrib",
+             title = "Cercle des correlations selon le plan 1-2",
+             gradient.cols=c("red", "gold", "forestgreen"))
+
+####8--- Correlation matrix --- ####
+install.packages("Hmisc")
+library(Hmisc)
+library(corrplot)
+library(PerformanceAnalytics)
+correlation <- rcorr(as.matrix(acp[,c(3,5)]), type = "spearman") 
+correlation
+corrplot(correlation$r, type="upper", order="hclust", p.mat=correlation$P, sig.level=0.01, insig="blank", tl.cex=0.7  ,tl.col="black",tl.srt=45)
+chart.Correlation(as.matrix(acp[,c(3,5)]), histogram = T,pch=19)
+
 
