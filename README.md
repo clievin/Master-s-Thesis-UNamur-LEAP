@@ -32,62 +32,49 @@ mort<-read.table("mortalite_cassandra.txt", header=T) #loading data into a dataf
 
 head(mort)#6 first lines of mort
 
-##2 Data preparation : transformation of the non-continuous variables into factors ##
+##2 Data preparation : transformation of the non-continuous variables ##
 str(mort)#structure of the variables
-mort$treatment <- as.factor(mort$treatment) #transformation of this non-continuous
-mort$age_death=as.numeric(mort$age_death)
-mort$death=as.logical(mort$death)
+mort$treatment <- as.factor(mort$treatment) #transformation of this non-continuous into a factor
+mort$age_death=as.numeric(mort$age_death) #transformation of this non-continuous into a numeric variable
+mort$death=as.logical(mort$death) #transformation of this non-continuous into a logical variable
 
 ##3 Exploration of the data in order to know in which direction to go for data treatment ##
 
-summary(mort)
-head(mort)
-describeBy(mort, group="treatment") #we are mainly looking for a potential effect of the PM treatment here
+summary(mort) #result summaries of the results of my dataframe mort, for each variable
+describeBy(mort, group="treatment") #Report basic summary statistics by a grouping variable (treatment here), since we are mainly looking for a potential effect of the PM treatment
 
 ##4 Model creation ##
 mod1 <-glm(death~treatment,data=mort,family="binomial") #Generalized Linear Model (GLM)  this model is mostly used when the response variable is a count or a proportion 
-#glm binomial (0/1)
 
-library(car)
+library(car)#loading car package for Anova function
 Anova(mod1) # p-value=0.001886 (significative effect of the treatment on the mortality)
 
 library(dunn.test) #test post-hoc for GLM
+mort$death=as.numeric(mort$death)#x (death in this dataframe), has to be numeric for using dunn test
 dunn.test(mort$death,mort$treatment) # significative difference (p-value < 0.025) of mortality between the treatments control-high, and low-high
 
-
 ##5 Model validation ##
-#nb: GLM binomial: no model verification needed since we assume that the distribution of the variable is normal (need confirmation). still check residuals distribution?
+#nb: GLM binomial: no model verification needed since we assume that the distribution of the variable is normal. Next lines is just for exploring.
 
-summary(mod1)
-mod1$deviance/mod1$df.resid #0.3637901 : sub-dispersion. Should be closed to 1.  is it a problem ?
+##6 Model vizualization ##
+#barplot of the percentage of survivals at the end of the experiment for each treatment#
 
-plot (mod1, which=1)#general analysis of the residuals
-plot (mod1, which=2)#residuals' distribution
-plot (mod1, which=4)#cooke's distance to see outlayers
-plot (mod1, which=5) 
+prop_alive_controle<-100 #% of alive individuals at the end of the experiment for the treatment "control"
+prop_alive_low<-100 #% of alive individuals at the end of the experiment for the treatment "low"
+prop_alive_high<-60 #% of alive individuals at the end of the experiment for the treatment "high"
 
+meanlc1<-mean((mort$death[mort$treatment=="controle"])) #get mean for the treatment "control"
+errorlc1<-(sd((mort$death[mort$treatment=="controle"])))/(sqrt(length((mort$death[mort$treatment=="controle"])))) #get errors for the treatment "control"
 
+meanlc2<-mean((mort$death[mort$treatment=="low"])) #get mean for the treatment "low"
+errorlc2<-(sd((mort$death[mort$treatment=="low"])))/(sqrt(length((mort$death[mort$treatment=="low"])))) #get errors for the treatment "low"
 
-
-
-##6 Model vizualization
-#barplot of the percentage of survivals at the end of the experiment for each treatment ##
-
-prop_alive_controle<-100 #% of alive individuals at the end of the experiment for the treatment "controle"
-prop_alive_low<-100
-prop_alive_high<-60
-meanlc1<-mean((mort$death[mort$treatment=="controle"])) #get mean for the treatment "controle"
-errorlc1<-(sd((mort$death[mort$treatment=="controle"])))/(sqrt(length((mort$death[mort$treatment=="controle"])))) #get errors for the treatment "controle"
-
-meanlc2<-mean((mort$death[mort$treatment=="low"])) 
-errorlc2<-(sd((mort$death[mort$treatment=="low"])))/(sqrt(length((mort$death[mort$treatment=="low"]))))
-
-meanlc3<-mean((mort$death[mort$treatment=="high"])) 
-errorlc3<-(sd((mort$death[mort$treatment=="high"])))/(sqrt(length((mort$death[mort$treatment=="high"]))))
+meanlc3<-mean((mort$death[mort$treatment=="high"])) #get mean for the treatment "high"
+errorlc3<-(sd((mort$death[mort$treatment=="high"])))/(sqrt(length((mort$death[mort$treatment=="high"])))) #get errors for the treatment "high"
 
 
 
-matobs1 <-matrix(c(prop_alive_controle,prop_alive_low,prop_alive_high),nrow=1,dimnames=list(c("")))
+matobs1 <-matrix(c(prop_alive_controle,prop_alive_low,prop_alive_high),nrow=1,dimnames=list(c("")))#matrix creation named matobs1
 
 barplot(matobs1
         ,beside = TRUE
@@ -108,7 +95,7 @@ axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1)
 axis(side=2,at=c(0,20,40,60,80,100),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
-text(0.5,110,"a")
+text(0.5,110,"a") #addition of letters to indicate significative differences between treatments (same letter= no significative differences, and conversely
 text(2.5,110,"a")
 text(4.5,70,"b")
 
@@ -120,14 +107,14 @@ text(4.5,70,"b")
 ##1 Survival data loading ##
 
 alive <-read.table("survival_cassandra.txt", header=T) 
-head(alive)
+head(alive)#col age_death.1 contains correction for a better visualization of the graphe. 138 in high refers to 140,136 in low refers to 140, it just helps avoiding overlapping graphs.
 
 ##2 Data preparation : transformation of the non-continuous variables into factors ##
 
-alive$age_death=as.numeric(alive$age_death)
-alive$death=as.logical(alive$death)#for death variable: 0= alive and 1= dead. 
+alive$age_death=as.numeric(alive$age_death)#into a numeric variable
+alive$death=as.logical(alive$death)#into a logical variable (0= alive and 1= dead). 
 
-##3 Model vizualization : Survival curves
+##3 Model vizualization : Survival curves ##
 
 library(survival) #? voir si vraiment utile
 surv <- survdiff(Surv(age_death,death)~treatment,data=alive)
@@ -135,27 +122,23 @@ surv #p= 8e-04
 
 library(survminer)
 
-#Probleme pour graphe ci-dessous: "Erreur dans ggsurvplot(surv) : objet 'ggsurv' introuvable." J'avais réussi à créer mon graphe de survie en janvier avec ça.
-#je ne sais pas pourquoi ces commandes ne fonctionnent plus maintenant, mais je règle ça au plus vite.
+alivegraph <- survfit(Surv(age_death.1, death) ~ treatment, data =alive)#survfit() function creates survival curves using the Kaplan-Meier method based on a formula. 
 
 ggsurvplot(
-  surv,                       #  fit object with calculated statistics
-  legend="bottom",           # change the legend for x axis is written on the bottom of the curves
-  legend.labs = c("Controle","Low dose","High dose"), #change the labels for the x axis
-  data = alive,              # data used to fit survival curves
-  risk.table = TRUE,         #show risk table.
-  risk.table.col = "treatment",# Change risk table color by treatment
+  alivegraph,                       #  fit object with calculated statistics
+  legend="top",           # change the legend for x axis is written on the bottom of the curves
+  legend.labs = c("control","low","high"), #change the labels for the x axis
+  #risk.table = TRUE,         #show risk table.
+  #risk.table.col = "treatment",# Change risk table color by treatment
   pval = TRUE,               #show p-value
-  conf.int = TRUE,           #show confidence intervals for point estimates of survival curves
+  #conf.int = TRUE,           #show confidence intervals for point estimates of survival curves
   xlim = c(0,150),           #range of values on the x axis
   xlab = "Time in days",     # x axis title
   break.time.by = 20,        #break X axis in time intervals by 20
   ggtheme = theme_light(),   # customize plot and risk table with a theme.
-  risk.table.y.text.col = T, # colour risk table text annotations
-  surv.median.line = "hv"    #add the median survival pointer
+  #risk.table.y.text.col = T, # colour risk table text annotations
+  #surv.median.line = "hv"    #add the median survival pointer
 )
-
-
 
 ##### --- GROWTH --- #####
 
