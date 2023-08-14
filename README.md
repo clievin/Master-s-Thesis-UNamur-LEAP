@@ -102,7 +102,7 @@ text(4.5,70,"b")
 
 
 
-##### --- SURVIVAL (just for survival curves) --- #####
+##### --- SURVIVAL --- #####
 
 ##1 Survival data loading ##
 
@@ -288,6 +288,7 @@ arrows(4.5, means3 - errors3, 4.5,means3 + errors3, col = "black", angle = 90, c
 
 ##### --- WEIGHT --- #####
 
+
 ##1 Growth data loading ##
 growth<-read.table("growth.csv", header=T, sep =";", dec = "." )
 head(growth)
@@ -308,14 +309,14 @@ mod3bis <-aov(weight ~ treatment, data=growth)
 summary(mod3bis) #p-value= 0.05 : no significative effect of the treatment on the weigth has been highlited
 
 ###5 Model visualization ##
-meanss1 <-mean((growth$weigth[growth$treatment=="control"])) #get mean for the treatment "controle"
-errorss1<-(sd((growth$weigth[growth$treatment=="control"])))/(sqrt(length((growth$weigth[growth$treatment=="control"])))) #get errors for the treatment "controle"
+meanss1 <-mean((growth$weight[growth$treatment=="control"])) #get mean for the treatment "control"
+errorss1<-(sd((growth$weight[growth$treatment=="control"])))/(sqrt(length((growth$weight[growth$treatment=="control"])))) #get errors for the treatment "control"
 
-meanss2<-mean((growth$weigth[growth$treatment=="low"])) 
-errorss2<-(sd((growth$weigth[growth$treatment=="low"])))/(sqrt(length((growth$weigth[growth$treatment=="low"]))))
+meanss2<-mean((growth$weight[growth$treatment=="low"])) #get mean for the treatment "low"
+errorss2<-(sd((growth$weight[growth$treatment=="low"])))/(sqrt(length((growth$weight[growth$treatment=="low"]))))#get errors for the treatment "low"
 
-meanss3<-mean((growth$weigth[growth$treatment=="high"])) 
-errorss3<-(sd((growth$weigth[growth$treatment=="high"])))/(sqrt(length((growth$weigth[growth$treatment=="high"]))))
+meanss3<-mean((growth$weight[growth$treatment=="high"])) #get mean for the treatment "high"
+errorss3<-(sd((growth$weight[growth$treatment=="high"])))/(sqrt(length((growth$weight[growth$treatment=="high"]))))#get errors for the treatment "high"
 
 
 matweigth<-matrix(c(meanss1,meanss2,meanss3),nrow=1,dimnames=list(c("")))
@@ -326,10 +327,10 @@ barplot(matweigth
         , horiz = FALSE
         , legend.text = FALSE
         ,xlab="PM concentration during exposure (µg/L)"
-        ,ylab=" Fish body weigth at 140 dph (g)"
+        ,ylab=" Fish body weight at 140 dph (g)"
         ,cex.lab=1.15
         ,xlim=c(0,5.5)
-        ,ylim=c(0,25)
+        ,ylim=c(0,0.3)
         ,lwd = 2
         ,pch=16
         ,axes=FALSE
@@ -337,21 +338,18 @@ barplot(matweigth
         ,col=c("white","grey","grey30"))
 
 axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1)
-axis(side=2,at=c(0,5,10,15,20,25),cex.axis=1,las=2)
+axis(side=2,at=c(0,0.05,0.1,0.15,0.2,0.25,0.3),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
 
-text(0.5,21.5,"a")
-text(2.5,22,"a")
-text(4.5,23,"a")
+text(0.5,0.15,"a")
+text(2.5,0.152,"a")
+text(4.5,0.178,"a")
 
 #errors bars
-arrows(0.5, means1 - errors1, 0.5,means1 + errors1, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-arrows(2.5, means2 - errors2, 2.5,means2 + errors2, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-arrows(4.5, means3 - errors3, 4.5,means3 + errors3, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-
-
-
+arrows(0.5, meanss1 - errorss1, 0.5,meanss1 + errorss1, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(2.5, meanss2 - errorss2, 2.5,meanss2 + errorss2, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(4.5, meanss3 - errorss3, 4.5,meanss3 + errorss3, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 
 
 
