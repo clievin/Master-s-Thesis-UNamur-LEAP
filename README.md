@@ -148,56 +148,37 @@ growth<-read.table("growth.csv", header=T, sep =";", dec = "." )  #growth rate= 
 head(growth)
 str(growth)
 
-##2 Data preparation : transformation of the non-continuous variables into factors ##
+##2 Data preparation : transformation of the non-continuous variables ##
 
-str(mort)#structure of the variables
-growth$treatment <- as.factor(growth$treatment) #transformation of this non-continuous
-
+growth$treatment <- as.factor(growth$treatment) #into a factor
 
 ##3 Exploration of the data in order to know in which direction to go for data treatment ##
 
 describeBy(growth, group="treatment") #we are mainly looking for a potential effect of the PM treatment here
 
-
 ##4 Model creation ##
 
 hist(growth$growth_rate)#+- normal distribution
-shapiro.test(growth$growth_rate)#normal distribution
-mod2 <-aov(growth_rate ~ treatment, data=growth) #anova because there is one explicative variable (treatment) with more than 2 factors (need confirmation)
+shapiro.test(growth$growth_rate)#normal distribution 
+mod2 <-aov(growth_rate ~ treatment, data=growth) #to fit an analysis of variance by a call to "lm" for each stratum
 
-summary(mod2) #p-value= 0.101 : no significative effect of the treatment on the growth rate has been highlited
-
+summary(mod2) #p-value= 0.458 : no significative effect of the treatment on the growth rate has been highlited
 
 ##5 Model validation ##
-#for linear or mixed models, need to check mainly the residuals'distribution. We can have a normal variable distribution but not for residuals.
+#for linear or mixed models, need to check mainly the residuals'distribution.
 
-plot (mod2, which=1)#general analysis of residuals : ok
-plot (mod2, which=2)#distribution of residuals: not sure it is ok
-plot (mod2, which=4)#Cooke's distance for outlayers. Not exceeds 1 so ok
-plot (mod2, which=5) #prob if leverage > 0.5. So here: not ok I suppose
-
-
-# Homogeneity of variance: residuals vs predicted values
-plot(resid(mod2)~fitted(mod2))# i think ok but not sure
-
-#Independence of residuals versus individual explanatory variables   (bug)
-
-op <- par(mfrow=c(2,2), mar=c(4,4,.5,.5))
-plot(resid(mod2)~mod2$treatment), xlab="Treatment", ylab="Normalized residuals")+
-  abline(h=0, lty=2)
-par(op)
+plot (mod2, which=1)#general analysis of residuals
+plot (mod2, which=2)#distribution of residuals
+plot (mod2, which=4)#Cooke's distance for outlayers
+plot (mod2, which=5)#leverage plot
 
 #Check for normality of residuals
-hist(resid(mod2)) # bof
-qqnorm(resid(mod2)) # bof
-qqline(resid(mod2)) # bof
-
-#maybe check if there is outlayers ?
-### search for extreme values
-
+hist(resid(mod2))
+qqnorm(resid(mod2))
+qqline(resid(mod2))
 dotchart(growth$growth_rate, group=growth$treatment)#extreme values
 
-##6?Model vizualization : Graph barplot (no boxplot because not a normal distribution i think so)
+##6 Model vizualization : Graph barplot ##
 
 meanlc4<-mean((growth$growth_rate[growth$treatment=="Controle"])) #get mean for the treatment "controle"
 errorlc4<-(sd((growth$growth_rate[growth$treatment=="Controle"])))/(sqrt(length((growth$growth_rate[growth$treatment=="Controle"])))) #get errors for the treatment "controle"
