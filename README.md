@@ -180,14 +180,14 @@ dotchart(growth$growth_rate, group=growth$treatment)#extreme values
 
 ##6 Model vizualization : Graph barplot ##
 
-meanlc4<-mean((growth$growth_rate[growth$treatment=="control"])) #get mean for the treatment "controle"
-errorlc4<-(sd((growth$growth_rate[growth$treatment=="control"])))/(sqrt(length((growth$growth_rate[growth$treatment=="control"])))) #get errors for the treatment "controle"
+meanlc4<-mean((growth$growth_rate[growth$treatment=="control"])) #get mean for the treatment "control"
+errorlc4<-(sd((growth$growth_rate[growth$treatment=="control"])))/(sqrt(length((growth$growth_rate[growth$treatment=="control"])))) #get errors for the treatment "control"
 
-meanlc5<-mean((growth$growth_rate[growth$treatment=="low"])) 
-errorlc5<-(sd((growth$growth_rate[growth$treatment=="low"])))/(sqrt(length((growth$growth_rate[growth$treatment=="low"]))))
+meanlc5<-mean((growth$growth_rate[growth$treatment=="low"])) #get mean for the treatment "low"
+errorlc5<-(sd((growth$growth_rate[growth$treatment=="low"])))/(sqrt(length((growth$growth_rate[growth$treatment=="low"]))))#get errors for the treatment "low"
 
-meanlc6<-mean((growth$growth_rate[growth$treatment=="high"])) 
-errorlc6<-(sd((growth$growth_rate[growth$treatment=="high"])))/(sqrt(length((growth$growth_rate[growth$treatment=="high"]))))
+meanlc6<-mean((growth$growth_rate[growth$treatment=="high"])) #get mean for the treatment "high"
+errorlc6<-(sd((growth$growth_rate[growth$treatment=="high"])))/(sqrt(length((growth$growth_rate[growth$treatment=="high"]))))#get errors for the treatment "high"
 
 
 matgrowth <-matrix(c(meanlc4,meanlc5,meanlc6),nrow=1,dimnames=list(c("")))
@@ -221,56 +221,164 @@ arrows(2.5, meanlc5 - errorlc5, 2.5,meanlc5 + errorlc5, col = "black", angle = 9
 arrows(4.5, meanlc6 - errorlc6, 4.5,meanlc6 + errorlc6, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 
 
+##### --- LENGTH --- #####
+
+##1 Growth data loading ##
+growth<-read.table("growth.csv", header=T, sep =";", dec = "." )
+head(growth)
+str(growth)
+
+##2 Data preparation : transformation of the non-continuous variables ##
+str(growth)#structure of the variables
+growth$treatment <- as.factor(growth$treatment) #into factor
+growth$length_140mm=as.numeric(growth$length_140mm)#into numeric
+
+##3 Exploration of the data in order to know in which direction to go for data treatment ##
+describeBy(growth, group="treatment") #we are mainly looking for a potential effect of the PM treatment here
+
+##4 Model creation ##
+hist(growth$length_140mm)
+shapiro.test(growth$length_140mm)
+mod2bis <-aov(length_140mm ~ treatment, data=growth)
+summary(mod2bis) #p-value= 0.05 : no significative effect of the treatment on the length has been highlited
+
+###5 Model visualization ##
+means1 <-mean((growth$length_140mm[growth$treatment=="control"])) #get mean for the treatment "controle"
+errors1<-(sd((growth$length_140mm[growth$treatment=="control"])))/(sqrt(length((growth$length_140mm[growth$treatment=="control"])))) #get errors for the treatment "controle"
+
+means2<-mean((growth$length_140mm[growth$treatment=="low"])) 
+errors2<-(sd((growth$length_140mm[growth$treatment=="low"])))/(sqrt(length((growth$length_140mm[growth$treatment=="low"]))))
+
+means3<-mean((growth$length_140mm[growth$treatment=="high"])) 
+errors3<-(sd((growth$length_140mm[growth$treatment=="high"])))/(sqrt(length((growth$length_140mm[growth$treatment=="high"]))))
+
+
+matsize<-matrix(c(means1,means2,means3),nrow=1,dimnames=list(c("")))
+
+
+barplot(matsize
+        ,beside = TRUE
+        , horiz = FALSE
+        , legend.text = FALSE
+        ,xlab="PM concentration during exposure (µg/L)"
+        ,ylab=" Fish body size at 140 dph (mm)"
+        ,cex.lab=1.15
+        ,xlim=c(0,5.5)
+        ,ylim=c(0,25)
+        ,lwd = 2
+        ,pch=16
+        ,axes=FALSE
+        ,space=c(0,1,1)
+        ,col=c("white","grey","grey30"))
+
+axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1)
+axis(side=2,at=c(0,5,10,15,20,25),cex.axis=1,las=2)
+abline(h= 0, col = "black")
+
+
+text(0.5,21.5,"a")
+text(2.5,22,"a")
+text(4.5,23,"a")
+
+#errors bars
+arrows(0.5, means1 - errors1, 0.5,means1 + errors1, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(2.5, means2 - errors2, 2.5,means2 + errors2, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(4.5, means3 - errors3, 4.5,means3 + errors3, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+
+
+##### --- WEIGHT --- #####
+
+##1 Growth data loading ##
+growth<-read.table("growth.csv", header=T, sep =";", dec = "." )
+head(growth)
+str(growth)
+
+##2 Data preparation : transformation of the non-continuous variables##
+str(growth)#structure of the variables
+growth$treatment <- as.factor(growth$treatment) #into factor
+growth$weight=as.numeric(growth$weight)#into numeric
+
+##3 Exploration of the data in order to know in which direction to go for data treatment ##
+describeBy(growth, group="treatment") #we are mainly looking for a potential effect of the PM treatment here
+
+##4 Model creation ##
+hist(growth$weight)
+shapiro.test(growth$weight)
+mod3bis <-aov(weight ~ treatment, data=growth)
+summary(mod3bis) #p-value= 0.05 : no significative effect of the treatment on the weigth has been highlited
+
+###5 Model visualization ##
+meanss1 <-mean((growth$weigth[growth$treatment=="control"])) #get mean for the treatment "controle"
+errorss1<-(sd((growth$weigth[growth$treatment=="control"])))/(sqrt(length((growth$weigth[growth$treatment=="control"])))) #get errors for the treatment "controle"
+
+meanss2<-mean((growth$weigth[growth$treatment=="low"])) 
+errorss2<-(sd((growth$weigth[growth$treatment=="low"])))/(sqrt(length((growth$weigth[growth$treatment=="low"]))))
+
+meanss3<-mean((growth$weigth[growth$treatment=="high"])) 
+errorss3<-(sd((growth$weigth[growth$treatment=="high"])))/(sqrt(length((growth$weigth[growth$treatment=="high"]))))
+
+
+matweigth<-matrix(c(meanss1,meanss2,meanss3),nrow=1,dimnames=list(c("")))
+
+
+barplot(matweigth
+        ,beside = TRUE
+        , horiz = FALSE
+        , legend.text = FALSE
+        ,xlab="PM concentration during exposure (µg/L)"
+        ,ylab=" Fish body weigth at 140 dph (g)"
+        ,cex.lab=1.15
+        ,xlim=c(0,5.5)
+        ,ylim=c(0,25)
+        ,lwd = 2
+        ,pch=16
+        ,axes=FALSE
+        ,space=c(0,1,1)
+        ,col=c("white","grey","grey30"))
+
+axis(side=1.5,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1)
+axis(side=2,at=c(0,5,10,15,20,25),cex.axis=1,las=2)
+abline(h= 0, col = "black")
+
+
+text(0.5,21.5,"a")
+text(2.5,22,"a")
+text(4.5,23,"a")
+
+#errors bars
+arrows(0.5, means1 - errors1, 0.5,means1 + errors1, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(2.5, means2 - errors2, 2.5,means2 + errors2, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+arrows(4.5, means3 - errors3, 4.5,means3 + errors3, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
+
+
+
+
+
+
 ##### --- FECUNDITY --- #####
 
-##1? fecundity data loading ##
+##1 fecundity data loading ##
 
 fecundity <-read.table("fecundity.csv", header=T, sep =";", dec = "." )
 head(fecundity)
 
-##2? Data preparation : transformation of the non-continuous variables into factors ##
+##2 Data preparation : transformation of the non-continuous variables##
 
 str(fecundity)
-fecundity$hatching_date=parse_date_time(fecundity$hatching_date,"dmy")
-fecundity$date_first_egg=parse_date_time(fecundity$date_first_egg,"dmy")
+fecundity$hatching_date=parse_date_time(fecundity$hatching_date,"dmy")#into a date format
+fecundity$date_first_egg=parse_date_time(fecundity$date_first_egg,"dmy")#into a date format
+fecundity$sexual_maturity <- as.logical(fecundity$sexual_maturity)#into a logical variable
 
-fecundity$sexual_maturity <- as.logical(fecundity$sexual_maturity) 
+##3 Model creation ## : analysis of the variable "sexual_maturity" (did the individual hatch or not?)
 
-##3? Model creation ## : analysis of the variable "sexual_maturity" (did the individual hatch or not?)
-
-mod3 <-glm(sexual_maturity~treatment,data=fecundity,family="binomial") #GLM binomial
+mod3 <-glm(sexual_maturity~treatment,data=fecundity,family="binomial") #binomial GLM
 
 anova(mod3,test = "Chisq") #p-value= 0.08651 so no significant effect of the treatment on the probability of hatching has been highlited
 
+##4 Model validation ##
+#nb: GLM binomial: no model verification needed since we assume that the distribution of the variable is normal. Next lines is just for exploring.
 
-
-##4? Model validation ##
-
-# Check for homogeneity of variance: residuals vs predicted values
-plot(resid(mod3)~fitted(mod3), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #5 points a bit lost but I think it is ok ?
-
-#Check for independence of residuals versus individual explanatory variables (I don't know how to use these commands)
-
-op <- par(mfrow=c(1,1), mar=c(4,4,.5,.5))
-plot(resid(mod3)~test1$Replicate, xlab="Replicate", ylab="Normalized residuals")+
-  abline(h=0, lty=2)
-par(op)
-
-summary(mod3) #intercept et high sont signif
-
-#Dispersion of residuals (GLM)
-mod3$deviance/mod3$df.resid #0.3637901 : mild-overdispersion (1.227392) so more variability than expected. It is closed to 1 so ok. Is it like hist and shapiro de resid ?
-
-# These commands are important ?
-
-plot (mod1, which=1)#analyse g?n?rale des r?sidus
-plot (mod1, which=2)#distribution  des r?sidus
-plot (mod1, which=4)#distance de cooke pour voir outlayers. je sais plus comment interpr?ter ?
-plot (mod1, which=5)#
-
-
-##5?Model vizualization ##
+##5 Model vizualization ##
 
 # Barplot : probability of hatching for an individual in each treatment 
 
