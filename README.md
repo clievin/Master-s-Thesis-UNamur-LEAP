@@ -487,7 +487,7 @@ m$predict_cumul_shelter <- x1 #addition of a new column in the df "m" containing
 hist(m$predict_cumul_shelter)# distribution does follow a normal distribution
 shapiro.test(m$predict_cumul_shelter) #p-value = 0.9633 so confirmation that the distribution of the variable follows a normal distribution
 
-# Model (selected by using ANOVA)
+#Model (selected by using ANOVA)
 
 #Linear mixed-effects model 
 
