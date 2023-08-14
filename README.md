@@ -377,7 +377,7 @@ anova(mod3,test = "Chisq") #p-value= 0.08651 so no significant effect of the tre
 
 ##5 Model vizualization ##
 
-# Barplot : probability of hatching for an individual in each treatment 
+#Barplot : probability of hatching for an individual in each treatment 
 
 fecundity$sexual_maturity <- as.numeric(fecundity$sexual_maturity) 
 mature <- fecundity[fecundity$sexual_maturity=="1",] #subset of the "mature" individuals
@@ -388,7 +388,7 @@ propmatureld <- 5/14 #proportion of individuals which have hatched within the tr
 propmaturehd <- 4/6 #proportion of individuals which have hatched within the treatment high dose
 
 
-# no mean and sd and no error bars as the response variable is a logical. The R response is : NA_real for errorlc and meanlc
+#no mean and sd and no error bars as the response variable is a logical. The R response is : NA_real for errorlc and meanlc
 matobsmature <-matrix(c(propmaturecontrole,propmatureld,propmaturehd),nrow=1,dimnames=list(c("")))
 
 
