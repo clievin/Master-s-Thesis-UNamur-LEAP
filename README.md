@@ -961,11 +961,10 @@ expression$gene<-as.factor(expression$gene)
 expression$relative_gene_expression<-as.numeric(expression$relative_gene_expression)
 
 
-####1? --- NipBL --- #####
+####1 --- NipbL --- #####
 
 ## NipBL data preparation ##
 nipbl <- expression[expression$gene=="nipbl",] #subset of the dataframe expression with only lines concerning nipbl
-
 
 hist(nipbl$relative_gene_expression)#does not follow a normal distribution
 shapiro.test(nipbl$relative_gene_expression)#does not follow a normal distribution
@@ -982,46 +981,43 @@ hist(nipbl$predict_REG)#does follow a normal distribution
 
 ## Model preparation ##
 
-mod1 <- aov(predict_REG ~ treatment, data= nipbl)#jsp si je dois bien faire comme ?a
+mod1 <- aov(predict_REG ~ treatment, data= nipbl)
 summary(mod1)# p-value=0.374 : no nipbl genetic expression's mean is significantly different from a treatment to another
-shapiro.test(resid(mod3)) #normalit? des r?sidus suivie (p-value = 0.998)
-
+shapiro.test(resid(mod1)) #residues normality is followed 
 
 ## Model validation ##
 
 # Check for homogeneity of variance: residuals vs predicted values
 
-plot(resid(mod1)~fitted(mod1)), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) # ? d?passe 1 en y et en x, ? -0.3 et ? 0.2.
+plot(resid(mod1)~fitted(mod1), xlab="Predicted values", ylab="Normalized residuals")+
+  abline(h=0, lty=2) 
 
-#Check for independence of residuals versus individual explanatory variables (marche pas non plus)
+#Check for independence of residuals versus individual explanatory variables
 
 par(mfrow=c(1,1), mar=c(4,4,.5,.5))
 
 plot(resid(mod1)~expression$treatment, xlab="Treatment", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #va pas non plus
+  abline(h=0, lty=2)
 
 dev.off()
 
 #Check for normality of residuals
-
 hist(resid(mod1))#distribution of residuals does follow a normal distribution
 qqnorm(resid(mod1))# ok
-qqline(resid(mod1))# ok m?me si au debut un peu sous la ligne
-
-shapiro.test(nipbl$predict_REG)#p-value=1 donc normalit? des r?sidus suivie
+qqline(resid(mod1))# ok m
+shapiro.test(nipbl$predict_REG)#p-value=1 
 
 
 ## Model visualization ##
 
-meanlc7<-mean((nipbl$predict_REG[nipbl$treatment=="controle"]))
-errorlc7<-(sd((nipbl$predict_REG[nipbl$treatment=="controle"])))/(sqrt(length((nipbl$predict_REG[nipbl$treatment=="controle"]))))
+meanlc7<-mean((nipbl$relative_gene_expression[nipbl$treatment=="control"]))
+errorlc7<-(sd((nipbl$relative_gene_expression[nipbl$treatment=="control"])))/(sqrt(length((nipbl$relative_gene_expression[nipbl$treatment=="control"]))))
 
-meanlc8<-mean((nipbl$predict_REG[nipbl$treatment=="low"]))
-errorlc8<-(sd((nipbl$predict_REG[nipbl$treatment=="low"])))/(sqrt(length((nipbl$predict_REG[nipbl$treatment=="low"]))))
+meanlc8<-mean((nipbl$relative_gene_expression[nipbl$treatment=="low"]))
+errorlc8<-(sd((nipbl$relative_gene_expression[nipbl$treatment=="low"])))/(sqrt(length((nipbl$relative_gene_expression[nipbl$treatment=="low"]))))
 
-meanlc9<-mean((nipbl$predict_REG[nipbl$treatment=="high"]))
-errorlc9<-(sd((nipbl$predict_REG[nipbl$treatment=="high"])))/(sqrt(length((nipbl$predict_REG[nipbl$treatment=="high"]))))
+meanlc9<-mean((nipbl$relative_gene_expression[nipbl$treatment=="high"]))
+errorlc9<-(sd((nipbl$relative_gene_expression[nipbl$treatment=="high"])))/(sqrt(length((nipbl$relative_gene_expression[nipbl$treatment=="high"]))))
 
 
 matnipbl <-matrix(c(meanlc7,meanlc8,meanlc9),nrow=1,dimnames=list(c("")))
@@ -1030,19 +1026,19 @@ barplot(matnipbl
         ,beside = TRUE
         , horiz = FALSE
         , legend.text = FALSE
-        ,xlab="Permethrin concentration during exposure (?g/L)"
+        ,xlab="PM concentration during exposure (µg/L)"
         ,ylab="Nipbl relative gene expression"
-        ,cex.lab=1.2
+        ,cex.lab=1
         ,xlim=c(0,5.5)
-        ,ylim=c(-1,1)
+        ,ylim=c(0,1.5)
         ,lwd = 2
         ,pch=16
         ,axes=FALSE
         ,space=c(0,1,1)
-        ,col=c("blue","green","red"))
+        ,col=c("white","grey","grey30"))
 
 axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1) 
-axis(side=2,at=c(-0.8, -0.4, 0,0.4,0.8),cex.axis=1,las=2)
+axis(side=2,at=c(0,0.5,1,1.5),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
 #errors bars
@@ -1050,15 +1046,14 @@ arrows(0.5, meanlc7 - errorlc7, 0.5,meanlc7 + errorlc7, col = "black", angle = 9
 arrows(2.5, meanlc8 - errorlc8, 2.5,meanlc8 + errorlc8, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(4.5, meanlc9 - errorlc9, 4.5,meanlc9 + errorlc9, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 
-text(0.5,1,"a")  
-text(2.5,1.6,"a")
-text(4.5,1.7,"a")
+text(0.5,0.95,"a")  
+text(2.5,0.2,"a")
+text(4.5,0.215,"a")
 
 
 ####2?--- DNMT3a1 --- #####
 ## DNMT3a1 data preparation ##
 dnmt3a <- expression[expression$gene=="dnmt3a1_",] #subset of the dataframe expression with only lines concerning dnmt3a
-
 
 hist(dnmt3a$relative_gene_expression)#does not follow a normal distribution
 shapiro.test(dnmt3a$relative_gene_expression)#does not follow a normal distribution
@@ -1076,9 +1071,9 @@ shapiro.test(dnmt3a$predict_REG)#p-value = 0.1757 : does follow a normal distrib
 ## Model preparation ##
 
 
-mod2 <- aov(predict_REG ~ treatment, data= dnmt3a)#jsp si je dois bien faire comme ?a
-summary(mod2)# p-value=0.649 : no dnmt3a genetic expression's mean is significantly different from a treatment to another
-shapiro.test(resid(mod2))#  p-value: 0.3885 so it does
+mod2 <- aov(predict_REG ~ treatment, data= dnmt3a)
+summary(mod2)# no dnmt3a genetic expression's mean is significantly different from a treatment to another
+shapiro.test(resid(mod2))# normal distribution
 
 
 ## Model validation ##
@@ -1086,14 +1081,13 @@ shapiro.test(resid(mod2))#  p-value: 0.3885 so it does
 # Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(mod2)~fitted(mod2), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) # rep: integer(0)
+  abline(h=0, lty=2) 
 
 #Check for independence of residuals versus individual explanatory variables (marche pas non plus)
 
 par(mfrow=c(1,1), mar=c(4,4,.5,.5))
-
 plot(resid(mod2)~expression$treatment, xlab="Treatment", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #va pas non plus
+  abline(h=0, lty=2) 
 
 dev.off()
 
@@ -1106,14 +1100,14 @@ qqline(resid(mod2))# ok
 
 ## Model visualization ##
 
-meanlc11<-mean((dnmt3a$predict_REG[dnmt3a$treatment=="controle"]))
-errorlc11<-(sd((dnmt3a$predict_REG[dnmt3a$treatment=="controle"])))/(sqrt(length((dnmt3a$predict_REG[dnmt3a$treatment=="controle"]))))
+meanlc11<-mean((dnmt3a$relative_gene_expression[dnmt3a$treatment=="control"]))
+errorlc11<-(sd((dnmt3a$relative_gene_expression[dnmt3a$treatment=="control"])))/(sqrt(length((dnmt3a$relative_gene_expression[dnmt3a$treatment=="control"]))))
 
-meanlc12<-mean((dnmt3a$predict_REG[dnmt3a$treatment=="low"]))
-errorlc12<-(sd((dnmt3a$predict_REG[dnmt3a$treatment=="low"])))/(sqrt(length((dnmt3a$predict_REG[dnmt3a$treatment=="low"]))))
+meanlc12<-mean((dnmt3a$relative_gene_expression[dnmt3a$treatment=="low"]))
+errorlc12<-(sd((dnmt3a$relative_gene_expression[dnmt3a$treatment=="low"])))/(sqrt(length((dnmt3a$relative_gene_expression[dnmt3a$treatment=="low"]))))
 
-meanlc13<-mean((dnmt3a$predict_REG[dnmt3a$treatment=="high"]))
-errorlc13<-(sd((dnmt3a$predict_REG[dnmt3a$treatment=="high"])))/(sqrt(length((dnmt3a$predict_REG[dnmt3a$treatment=="high"]))))
+meanlc13<-mean((dnmt3a$relative_gene_expression[dnmt3a$treatment=="high"]))
+errorlc13<-(sd((dnmt3a$relative_gene_expression[dnmt3a$treatment=="high"])))/(sqrt(length((dnmt3a$relative_gene_expression[dnmt3a$treatment=="high"]))))
 
 
 matdnmt <-matrix(c(meanlc11,meanlc12,meanlc13),nrow=1,dimnames=list(c("")))
@@ -1122,19 +1116,19 @@ barplot(matdnmt
         ,beside = TRUE
         , horiz = FALSE
         , legend.text = FALSE
-        ,xlab="Permethrin concentration during exposure (?g/L)"
+        ,xlab="PM concentration during exposure (µg/L)"
         ,ylab="DNMT3a relative gene expression"
         ,cex.lab=1.2
         ,xlim=c(0,5.5)
-        ,ylim=c(-1,1)
+        ,ylim=c(0,1)
         ,lwd = 2
         ,pch=16
         ,axes=FALSE
         ,space=c(0,1,1)
-        ,col=c("blue","green","red"))
+        ,col=c("white","grey","grey30"))
 
 axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1) 
-axis(side=2,at=c(-0.8, -0.4, 0,0.4,0.8),cex.axis=1,las=2)
+axis(side=2,at=c(0,0.5,1,1.5),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
 #errors bars
@@ -1142,9 +1136,10 @@ arrows(0.5, meanlc11 - errorlc11, 0.5,meanlc11 + errorlc11, col = "black", angle
 arrows(2.5, meanlc12 - errorlc12, 2.5,meanlc12 + errorlc12, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(4.5, meanlc13 - errorlc13, 4.5,meanlc13 + errorlc13, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 
-text(0.5,1,"a")  
-text(2.5,1.6,"a")
-text(4.5,1.7,"a")
+text(0.5,0.58,"a")  
+text(2.5,0.42,"a")
+text(4.5,0.45,"a")
+
 
 
 ####3? --- Mecp2 --- #####
@@ -1161,18 +1156,18 @@ shapiro.test(mecp2$relative_gene_expression)#does not follow a normal distributi
 library(bestNormalize) 
 bestNormalize(mecp2$relative_gene_expression)#Standardized Yeo-Johnson Transformation
 
-
 REG3 <- yeojohnson(mecp2$relative_gene_expression)
 y3 <- predict(REG3) 
 mecp2$predict_REG <- y3
 
 hist(mecp2$predict_REG)#does follow a normal distribution
-shapiro.test(mecp2$predict_REG)# p-value = 0.1327 : does follow a normal distribution
+shapiro.test(mecp2$predict_REG)#does follow a normal distribution
+
 
 
 ## Model preparation ##
 
-mod3 <- aov(predict_REG ~ treatment, data= mecp2)#jsp si je dois bien faire comme ?a
+mod3 <- aov(predict_REG ~ treatment, data= mecp2)
 summary(mod3)# p-value=0.543 : no mecp2 genetic expression's mean is significantly different from a treatment to another
 
 
@@ -1181,14 +1176,13 @@ summary(mod3)# p-value=0.543 : no mecp2 genetic expression's mean is significant
 # Check for homogeneity of variance: residuals vs predicted values
 
 plot(resid(mod3)~fitted(mod3), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) # rep: integer(0) mais graphic there. ok.
+  abline(h=0, lty=2) 
 
-#Check for independence of residuals versus individual explanatory variables (marche pas non plus)
+#Check for independence of residuals versus individual explanatory variables 
 
 par(mfrow=c(1,1), mar=c(4,4,.5,.5))
-
 plot(resid(mod3)~expression$treatment, xlab="Treatment", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #va pas non plus
+  abline(h=0, lty=2) 
 
 dev.off()
 
@@ -1201,14 +1195,14 @@ qqline(resid(mod3))# ok
 
 ## Model visualization ##
 
-meanlc14<-mean((mecp2$predict_REG[mecp2$treatment=="controle"]))
-errorlc14<-(sd((mecp2$predict_REG[mecp2$treatment=="controle"])))/(sqrt(length((mecp2$predict_REG[mecp2$treatment=="controle"]))))
+meanlc14<-mean((mecp2$relative_gene_expression[mecp2$treatment=="control"]))
+errorlc14<-(sd((mecp2$relative_gene_expression[mecp2$treatment=="control"])))/(sqrt(length((mecp2$relative_gene_expression[mecp2$treatment=="control"]))))
 
-meanlc15<-mean((mecp2$predict_REG[mecp2$treatment=="low"]))
-errorlc15<-(sd((mecp2$predict_REG[mecp2$treatment=="low"])))/(sqrt(length((mecp2$predict_REG[mecp2$treatment=="low"]))))
+meanlc15<-mean((mecp2$relative_gene_expression[mecp2$treatment=="low"]))
+errorlc15<-(sd((mecp2$relative_gene_expression[mecp2$treatment=="low"])))/(sqrt(length((mecp2$relative_gene_expression[mecp2$treatment=="low"]))))
 
-meanlc16<-mean((mecp2$predict_REG[mecp2$treatment=="high"]))
-errorlc16<-(sd((mecp2$predict_REG[mecp2$treatment=="high"])))/(sqrt(length((mecp2$predict_REG[mecp2$treatment=="high"]))))
+meanlc16<-mean((mecp2$relative_gene_expression[mecp2$treatment=="high"]))
+errorlc16<-(sd((mecp2$relative_gene_expression[mecp2$treatment=="high"])))/(sqrt(length((mecp2$relative_gene_expression[mecp2$treatment=="high"]))))
 
 
 matmecp2 <-matrix(c(meanlc14,meanlc15,meanlc16),nrow=1,dimnames=list(c("")))
@@ -1217,19 +1211,19 @@ barplot(matmecp2
         ,beside = TRUE
         , horiz = FALSE
         , legend.text = FALSE
-        ,xlab="Permethrin concentration during exposure (?g/L)"
+        ,xlab="PM concentration during exposure (µg/L)"
         ,ylab="Mecp2 relative gene expression"
-        ,cex.lab=1.2
+        ,cex.lab=1
         ,xlim=c(0,5.5)
-        ,ylim=c(-1,1)
+        ,ylim=c(0,1.5)
         ,lwd = 2
         ,pch=16
         ,axes=FALSE
         ,space=c(0,1,1)
-        ,col=c("blue","green","red"))
+        ,col=c("white","grey","grey30"))
 
 axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1) 
-axis(side=2,at=c(-0.8, -0.4, 0,0.4,0.8),cex.axis=1,las=2)
+axis(side=2,at=c(0,0.5,1,1.5),cex.axis=1,las=2)
 abline(h= 0, col = "black")
 
 #errors bars
@@ -1237,121 +1231,11 @@ arrows(0.5, meanlc14 - errorlc14, 0.5,meanlc14 + errorlc14, col = "black", angle
 arrows(2.5, meanlc15 - errorlc15, 2.5,meanlc15 + errorlc15, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 arrows(4.5, meanlc16 - errorlc16, 4.5,meanlc16 + errorlc16, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
 
-text(0.5,1,"a")  
-text(2.5,1.6,"a")
-text(4.5,1.7,"a")
+text(0.5,0.50,"a")  
+text(2.5,0.565,"a")
+text(4.5,0.53,"a")
 
 
 
-####4? --- sep15 --- #####
-## Sep15 data preparation ##
-
-
-sep <- expression[expression$gene=="sep_15_",] #subset of the dataframe expression with only lines concerning sep15
-
-
-hist(sep$relative_gene_expression)#does not follow a normal distribution
-shapiro.test(sep$relative_gene_expression)#does not follow a normal distribution
-
-library(bestNormalize) 
-bestNormalize(sep$relative_gene_expression)#Box Cox Transformation
-#faut denouveau faire boxcox mais je gal?re
-
-#Standardized Yeo-Johnson Transformation
-
-REG4 <- yeojohnson(sep$relative_gene_expression)
-y4 <- predict(REG4) 
-sep$predict_REG <- y4
-
-hist(sep$predict_REG)#does follow a normal distribution
-shapiro.test(sep$predict_REG)# p-value = p-value = 0.947 : does follow a normal distribution
-
-
-## Model preparation ##
-
-mod4 <- aov(predict_REG ~ treatment, data= sep)
-summary(mod4)# p-value=0.749 : no sep15 genetic expression's mean is significantly different from a treatment to another
-
-
-## Model validation ##
-
-# Check for homogeneity of variance: residuals vs predicted values
-
-plot(resid(mod4)~fitted(mod4), xlab="Predicted values", ylab="Normalized residuals")+
-  abline(h=0, lty=2) # rep: integer(0) mais graphic there. jsp si ok.
-
-#Check for independence of residuals versus individual explanatory variables (marche pas non plus)
-
-par(mfrow=c(1,1), mar=c(4,4,.5,.5))
-
-plot(resid(mod4)~expression$treatment, xlab="Treatment", ylab="Normalized residuals")+
-  abline(h=0, lty=2) #va pas non plus
-
-dev.off()
-
-#Check for normality of residuals
-
-hist(resid(mod4))#distribution of residuals does follow a normal distribution
-qqnorm(resid(mod4))
-qqline(resid(mod4))# ok mais bouge bcp au d?but qd m?me
-
-
-## Model visualization ##
-
-meanlc17<-mean((sep$predict_REG[sep$treatment=="controle"]))
-errorlc17<-(sd((sep$predict_REG[sep$treatment=="controle"])))/(sqrt(length((sep$predict_REG[sep$treatment=="controle"]))))
-
-meanlc18<-mean((sep$predict_REG[sep$treatment=="low"]))
-errorlc18<-(sd((sep$predict_REG[sep$treatment=="low"])))/(sqrt(length((sep$predict_REG[sep$treatment=="low"]))))
-
-meanlc19<-mean((sep$predict_REG[sep$treatment=="high"]))
-errorlc19<-(sd((sep$predict_REG[sep$treatment=="high"])))/(sqrt(length((sep$predict_REG[sep$treatment=="high"]))))
-
-
-matsep <-matrix(c(meanlc17,meanlc18,meanlc19),nrow=1,dimnames=list(c("")))
-
-barplot(matsep
-        ,beside = TRUE
-        , horiz = FALSE
-        , legend.text = FALSE
-        ,xlab="Permethrin concentration during exposure (?g/L)"
-        ,ylab="Sep15 relative gene expression"
-        ,cex.lab=1.2
-        ,xlim=c(0,5.5)
-        ,ylim=c(-1,1)
-        ,lwd = 2
-        ,pch=16
-        ,axes=FALSE
-        ,space=c(0,1,1)
-        ,col=c("blue","green","red"))
-
-axis(side=1.5,,at=c(0.5,2.5,4.5),labels=c("0","5","200"),tick=FALSE,cex.axis=1) 
-axis(side=2,at=c(-0.8, -0.4, 0,0.4,0.8),cex.axis=1,las=2)
-abline(h= 0, col = "black")
-
-#errors bars
-arrows(0.5, meanlc17 - errorlc17, 0.5,meanlc17 + errorlc17, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-arrows(2.5, meanlc18 - errorlc18, 2.5,meanlc18 + errorlc18, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-arrows(4.5, meanlc19 - errorlc19, 4.5,meanlc19 + errorlc19, col = "black", angle = 90, code = 3, length = 0.1,lwd = 2)
-
-text(0.5,1,"a")  
-text(2.5,1.6,"a")
-text(4.5,1.7,"a")
-
-
-####5? --- ACP --- ####
-###### PM impact on methylation level######
-
-mort<-read.table("mortalite_cassandra.txt", header=T) #loading data into a dataframe named "mort"
-
-head(mort)#6 first lines of mort
-
-
-
-
-
-#acp pour voir si changement d'expression dans le m?me sens
-#hit map pour voir visuellement quels sont les g?nes qui augmentent et/ou descendent: faire ?a avec prism.
-#ou faire avec cluster (voir app)
-#anova : suivre la normalit? et homog?n?it? des variances: si ok, faire ?a. si pas ok, 
+####5 --- ACP --- ####
 
